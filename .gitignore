@@ -118,8 +118,6 @@ tasks.txt
 *_files/
 
 # Archivos grandes de datos comunes
-*.csv
-*.xlsx
 *.xls
 *.sav
 *.dta
