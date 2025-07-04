@@ -47,13 +47,6 @@ renv/python/
 renv/sandbox/
 renv/staging/
 
-# Dentro de data
-/data/*
-# Pero NO ignorar los .gitkeep
-!/data/.gitkeep
-!/data/*/.gitkeep
-!/data/**/.gitkeep
-
 # Modelos guardados (opcional - descomenta si no quieres versionarlos)
 /models/*.rds
 /models/*.RData

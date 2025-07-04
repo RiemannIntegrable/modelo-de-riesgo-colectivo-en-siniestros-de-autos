@@ -1,0 +1,30 @@
+\documentclass{article}
+
+% Importar configuración
+\input{config/packages}
+\input{config/commands}
+\input{config/doc_style}
+
+% Información del documento
+\title{ Teoría del riesgo actuarial 2025-I}
+\author{Jose Miguel Acuña Hernandez, Andres Steven Puertas Londoño}
+\date{\today}
+\begin{document}
+\renewcommand{\thesection}{\Alph{section}}
+\thispagestyle{firstpage}
+\vspace*{9\baselineskip}
+\graphicspath{ {./figures/} }
+
+
+% Tabla de contenidos
+\renewcommand{\contentsname}{}
+\begin{cuadrocontenido}
+  \tableofcontents
+\end{cuadrocontenido}
+
+\section{seccion}
+
+\subsection{}
+\input{content/prueba.tex}
+
+\end{document}
