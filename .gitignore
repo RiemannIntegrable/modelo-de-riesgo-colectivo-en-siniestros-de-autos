@@ -53,7 +53,6 @@ renv/staging/
 /models/*.pkl
 
 # Imágenes generadas (opcional - descomenta si no quieres versionarlas)
-/images/*.png
 /images/*.jpg
 /images/*.pdf
 /images/*.svg
