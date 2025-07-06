@@ -59,12 +59,7 @@ renv/staging/
 # Pero siempre mantener
 !/images/.gitkeep
 
-# Generados por tex
-tex/*
-!tex/*.tex
-!tex/*.bib
-!tex/*.cls
-!tex/*.sty
+# Generados por LaTeX/XeTeX/LuaTeX
 *.aux
 *.bbl
 *.blg
@@ -76,6 +71,63 @@ tex/*
 *.nav
 *.snm
 *.vrb
+*.pdf
+*.xdv
+*.dvi
+*.ps
+*.eps
+*.lof
+*.lot
+*.lol
+*.idx
+*.ind
+*.ilg
+*.glo
+*.gls
+*.glg
+*.acn
+*.acr
+*.alg
+*.bcf
+*.run.xml
+*.figlist
+*.makefile
+*.backup
+*.bak
+*.tmp
+*.temp
+*.auxlock
+*.fls_latexmk
+*.loa
+*.thm
+*.upa
+*.upb
+*.listing
+*.loe
+*.dpth
+*.md5
+*.figlist-
+*.brf
+*.end
+*.eledsec[1-9]
+*.eledsec[1-9]R
+*.eledsec[1-9][0-9]
+*.eledsec[1-9][0-9]R
+*.eledsec[1-9][0-9][0-9]
+*.eledsec[1-9][0-9][0-9]R
+*-gnuplottex-*
+*.gnuplot
+*.table
+*.pytxcode
+pythontex-files-*/
+*.xyc
+*.xyd
+missfont.log
+*.mw
+
+# Permitir PDFs específicos si es necesario (descomenta las líneas siguientes)
+# !docs/final/*.pdf
+# !docs/figures/*.pdf
 
 # IDEs y editores
 .idea/
