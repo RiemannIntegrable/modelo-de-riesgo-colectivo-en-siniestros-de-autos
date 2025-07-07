@@ -1,0 +1,121 @@
+\section{Análisis Exploratorio de Datos y Limpieza}
+
+preliminarmente, se dedarrollaron 3 códigos en R para realizar el análisis de los datos de las bases correspondiente al histórico de ventas, al histórico de siniestros y por ultimo, procesar el modelo de riesgo colectivo a la base de datos anteriormente mencionada, en la cual se ha desagregado el modelo colectivo por tipos de cobertura.
+
+\subsection{Histórico de Siniestros}
+
+El análisis exploratorio de la base de datos histórica de siniestros se realizó utilizando el archivo \texttt{Siniestros\_Hist.xlsx}, el cual contiene información detallada sobre los siniestros ocurridos en diferentes períodos. El proceso de análisis incluyó las siguientes etapas:
+
+\subsubsection{Preparación y Limpieza de Datos}
+
+Se realizó una reestructuración completa de la base de datos, comenzando con el renombramiento de las columnas originales para mejorar la legibilidad y comprensión de los datos:
+
+\begin{itemize}
+    \item \textbf{FECHASIN}: Fecha\_siniestro
+    \item \textbf{VLRPRIMAPAG}: Prima\_efectivamente\_pagada\_hasta\_fecha\_siniestro
+    \item \textbf{VLRSININCUR}: Siniestro\_incurrido
+    \item \textbf{COBERTURA\_FINAL}: Cobertura\_final\_aplicada
+\end{itemize}
+
+\subsubsection{Categorización de Coberturas}
+
+Se identificaron cinco tipos principales de cobertura en la base de datos original:
+\begin{itemize}
+    \item \textbf{PTH}: Pérdida Total por Hurto
+    \item \textbf{PPD}: Pérdida Parcial por Daños
+    \item \textbf{PPH}: Pérdida Parcial por Hurto
+    \item \textbf{RC BIENES}: Responsabilidad Civil por Bienes
+    \item \textbf{RC PERS}: Responsabilidad Civil por Personas
+\end{itemize}
+
+Para efectos del análisis, las coberturas de responsabilidad civil (RC BIENES y RC PERS) se agruparon en una sola categoría denominada \textbf{Responsabilidad\_civil}, resultando en cuatro tipos de cobertura principales para el análisis.
+
+\subsubsection{Filtrado Temporal y Ajuste por Inflación}
+
+El análisis se enfocó exclusivamente en los siniestros ocurridos durante el año 2018, periodo que coincide con la base de datos de pólizas disponible. Se crearon variables temporales adicionales (Año, Mes, Día, Periodo) para facilitar el análisis temporal y el cruce con datos del Índice de Precios al Consumidor (IPC).
+
+\medskip
+
+Se implementó un ajuste por inflación utilizando los datos del IPC actualizado (\texttt{IPC\_Update.csv}), aplicando el factor de corrección correspondiente a cada período mensual del 2018. Esto permitió obtener valores de siniestros actualizados que reflejan el poder adquisitivo al final del período de análisis.
+
+\subsubsection{Segmentación por Tipo de Cobertura}
+
+Los datos se procesaron de manera independiente para cada tipo de cobertura, generando datasets específicos:
+
+\begin{itemize}
+    \item \textbf{Pérdida Parcial por Daños (PPD)}: Representa la mayor frecuencia de siniestros, con registros diarios consistentes a lo largo del año 2018.
+    \item \textbf{Pérdida Total por Hurto (PTH)}: Muestra menor frecuencia pero mayor severidad promedio por siniestro.
+    \item \textbf{Pérdida Parcial por Hurto (PPH)}: Presenta frecuencia intermedia con valores variables de siniestros.
+    \item \textbf{Responsabilidad Civil}: Agrupa tanto daños a bienes como a personas, mostrando patrones de frecuencia y severidad específicos.
+\end{itemize}
+
+\subsubsection{Agregación de Datos}
+
+Para cada tipo de cobertura se calcularon métricas agregadas por día, incluyendo:
+\begin{itemize}
+    \item Cantidad de siniestros por día
+    \item Valor total de siniestros incurridos (ajustado por inflación)
+\end{itemize}
+
+Este procesamiento resultó en tablas estructuradas que permiten el análisis posterior de frecuencia y severidad por tipo de cobertura, constituyendo la base fundamental para la modelación del riesgo colectivo en cada segmento de cobertura.
+
+\subsection{Histórico de Ventas}
+
+El análisis exploratorio de la base de datos histórica de pólizas se realizó utilizando el archivo \texttt{polizas\_v2.txt}, el cual contiene información detallada sobre las pólizas emitidas en diferentes períodos. El proceso de análisis incluyó las siguientes etapas:
+
+\subsubsection{Preparación y Limpieza de Datos}
+
+Se realizó una reestructuración completa de la base de datos, comenzando con el renombramiento de las columnas originales para mejorar la legibilidad y comprensión de los datos:
+
+\begin{itemize}
+    \item \textbf{FECINICIO}: Fecha\_inicio
+    \item \textbf{FECFIN}: Fecha\_fin
+    \item \textbf{VLRPRISUSCR}: Prima
+    \item \textbf{PTD}: Perdida\_total\_dano (eliminada posteriormente)
+    \item \textbf{PPD}: Perdida\_parcial\_danos
+    \item \textbf{PH}: Perdida\_total\_hurto
+    \item \textbf{PPH}: Perdida\_parcial\_hurto
+    \item \textbf{RC}: Responsabilidad\_civil
+\end{itemize}
+
+Se eliminaron las columnas redundantes \texttt{Perdida\_total\_dano}, \texttt{Valor\_asegurado} y \texttt{Valor\_asegurado\_rc} para simplificar el análisis y evitar duplicación de información.
+
+\subsubsection{Tratamiento de Duplicados y Valores Faltantes}
+
+Se identificaron y eliminaron registros duplicados para garantizar la integridad de los datos. El análisis de valores faltantes reveló que únicamente el 0.004\% de los datos (174 registros) presentaban valores nulos, concentrados exclusivamente en la variable \texttt{Prima}. Estos registros fueron eliminados del análisis para mantener la consistencia de la información.
+
+\subsubsection{Filtrado Temporal}
+
+Se aplicó un filtro temporal para incluir únicamente las pólizas con vigencia durante el año 2018, definido como aquellas pólizas cuya fecha de inicio fuera anterior o igual al 31 de diciembre de 2018, o cuya fecha de finalización fuera posterior o igual al 1 de enero de 2018. Este criterio aseguró la consistencia temporal con la base de datos de siniestros.
+
+\subsubsection{Depuración por Valor de Prima}
+
+Se implementó un filtro de calidad basado en el valor de la prima, estableciendo un umbral mínimo de \$459,500 pesos. Esta decisión se fundamentó en dos criterios principales:
+
+\begin{enumerate}
+    \item \textbf{Referencia regulatoria SOAT}: El valor de \$459,500 pesos corresponde al valor mínimo establecido en las tarifas SOAT 2016 para vehículos con cilindraje menor a 1500cc, según la regulación de seguros obligatorios de accidentes de tránsito vigente para el período de análisis (2016 en adelante). Este umbral representa un estándar mínimo razonable para primas de seguros de automóviles en el mercado colombiano.
+    
+    \item \textbf{Análisis estadístico de calidad}: El análisis mostró que las pólizas con primas inferiores a este valor (14.08\% del total) representaban únicamente el 2.04\% del valor total de primas, sugiriendo posibles inconsistencias o pólizas atípicas que podrían distorsionar el análisis actuarial.
+\end{enumerate}
+
+Después de aplicar este filtro, se conservaron 382,530 pólizas para el análisis, garantizando así la consistencia con los estándares regulatorios del sector asegurador y la calidad de los datos para la modelación del riesgo colectivo.
+
+\subsubsection{Análisis de Duración de Pólizas}
+
+Se calculó la duración de cada póliza como la diferencia en días entre la fecha de finalización y la fecha de inicio. El análisis reveló que 1,272 pólizas (0.33\% del total) tenían duración de cero días, representando el 0.70\% del valor total de primas. Se identificaron también 1,659 pólizas con duración inferior a 30 días, las cuales fueron mantenidas en el análisis tras confirmar que no representaban anomalías significativas.
+
+\subsubsection{Ajuste por Inflación}
+
+Se implementó un ajuste por inflación utilizando los datos del IPC histórico, aplicando factores de corrección específicos para cada período. Esto permitió expresar todas las primas en términos de poder adquisitivo constante, facilitando la comparabilidad temporal de los datos.
+
+\subsubsection{Cálculo de Exposición Diaria por Cobertura}
+
+Finalmente, se procesaron los datos para generar métricas de exposición diaria por tipo de cobertura durante el año 2018. Para cada día del período de análisis se calculó:
+
+\begin{itemize}
+    \item Número de pólizas vigentes por tipo de cobertura
+    \item Suma total de primas ajustadas por inflación
+    \item Días de exposición restantes para cada póliza
+\end{itemize}
+
+Este procesamiento resultó en cuatro datasets específicos correspondientes a las coberturas de Pérdida Parcial por Daños (PPD), Pérdida Total por Hurto (PTH), Pérdida Parcial por Hurto (PPH) y Responsabilidad Civil (RC), constituyendo la base para el cálculo de tasas de frecuencia y la modelación actuarial posterior.
