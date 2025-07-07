@@ -168,8 +168,12 @@ tasks.txt
 *.nb.html
 *_files/
 
-# Archivos grandes de datos comunes
+# Excluir toda la carpeta de datos
+data/
+
+# Archivos grandes de datos comunes (redundante con data/ pero útil para otros lugares)
 *.xls
+*.xlsx
 *.sav
 *.dta
 *.sas7bdat
@@ -180,6 +184,6 @@ tasks.txt
 *.sqlite
 *.db
 
-# Pero permitir archivos de ejemplo pequeños
+# Pero permitir archivos de ejemplo pequeños si es necesario
 !examples/*.csv
 !test_data/*.csv
