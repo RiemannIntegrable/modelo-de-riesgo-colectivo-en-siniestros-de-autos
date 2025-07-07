@@ -1,0 +1,64 @@
+\section{Análisis Exploratorio de Datos}
+
+preliminarmente, se dedarrollaron 3 códigos en R para realizar el análisis de los datos de las bases correspondiente al histórico de ventas, al histórico de siniestros y por ultimo, procesar el modelo de riesgo colectivo a la base de datos anteriormente mencionada, en la cual se ha desagregado el modelo colectivo por tipos de cobertura.
+
+\subsection{Histórico de Siniestros}
+
+El análisis exploratorio de la base de datos histórica de siniestros se realizó utilizando el archivo \texttt{Siniestros\_Hist.xlsx}, el cual contiene información detallada sobre los siniestros ocurridos en diferentes períodos. El proceso de análisis incluyó las siguientes etapas:
+
+\subsubsection{Preparación y Limpieza de Datos}
+
+Se realizó una reestructuración completa de la base de datos, comenzando con el renombramiento de las columnas originales para mejorar la legibilidad y comprensión de los datos:
+
+\begin{itemize}
+    \item \textbf{FECHASIN}: Fecha\_siniestro
+    \item \textbf{VLRPRIMAPAG}: Prima\_efectivamente\_pagada\_hasta\_fecha\_siniestro
+    \item \textbf{VLRSININCUR}: Siniestro\_incurrido
+    \item \textbf{COBERTURA\_FINAL}: Cobertura\_final\_aplicada
+\end{itemize}
+
+\subsubsection{Categorización de Coberturas}
+
+Se identificaron cinco tipos principales de cobertura en la base de datos original:
+\begin{itemize}
+    \item \textbf{PTH}: Pérdida Total por Hurto
+    \item \textbf{PPD}: Pérdida Parcial por Daños
+    \item \textbf{PPH}: Pérdida Parcial por Hurto
+    \item \textbf{RC BIENES}: Responsabilidad Civil por Bienes
+    \item \textbf{RC PERS}: Responsabilidad Civil por Personas
+\end{itemize}
+
+Para efectos del análisis, las coberturas de responsabilidad civil (RC BIENES y RC PERS) se agruparon en una sola categoría denominada \textbf{Responsabilidad\_civil}, resultando en cuatro tipos de cobertura principales para el análisis.
+
+\subsubsection{Filtrado Temporal y Ajuste por Inflación}
+
+El análisis se enfocó exclusivamente en los siniestros ocurridos durante el año 2018, periodo que coincide con la base de datos de pólizas disponible. Se crearon variables temporales adicionales (Año, Mes, Día, Periodo) para facilitar el análisis temporal y el cruce con datos del Índice de Precios al Consumidor (IPC).
+
+\medskip
+
+Se implementó un ajuste por inflación utilizando los datos del IPC actualizado (\texttt{IPC\_Update.csv}), aplicando el factor de corrección correspondiente a cada período mensual del 2018. Esto permitió obtener valores de siniestros actualizados que reflejan el poder adquisitivo al final del período de análisis.
+
+\subsubsection{Segmentación por Tipo de Cobertura}
+
+Los datos se procesaron de manera independiente para cada tipo de cobertura, generando datasets específicos:
+
+\begin{itemize}
+    \item \textbf{Pérdida Parcial por Daños (PPD)}: Representa la mayor frecuencia de siniestros, con registros diarios consistentes a lo largo del año 2018.
+    \item \textbf{Pérdida Total por Hurto (PTH)}: Muestra menor frecuencia pero mayor severidad promedio por siniestro.
+    \item \textbf{Pérdida Parcial por Hurto (PPH)}: Presenta frecuencia intermedia con valores variables de siniestros.
+    \item \textbf{Responsabilidad Civil}: Agrupa tanto daños a bienes como a personas, mostrando patrones de frecuencia y severidad específicos.
+\end{itemize}
+
+\subsubsection{Agregación de Datos}
+
+Para cada tipo de cobertura se calcularon métricas agregadas por día, incluyendo:
+\begin{itemize}
+    \item Cantidad de siniestros por día
+    \item Valor total de siniestros incurridos (ajustado por inflación)
+\end{itemize}
+
+Este procesamiento resultó en tablas estructuradas que permiten el análisis posterior de frecuencia y severidad por tipo de cobertura, constituyendo la base fundamental para la modelación del riesgo colectivo en cada segmento de cobertura.
+
+\subsection{Histórico de Ventas}
+
+\subsection{Modelo de Riesgo Colectivo} 
