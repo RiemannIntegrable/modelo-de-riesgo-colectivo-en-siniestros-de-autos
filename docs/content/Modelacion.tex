@@ -1,0 +1,89 @@
+\section{Modelo de riesgo colectivo}
+
+\subsection{Marco Teórico del Modelo}
+
+En el contexto del modelado de riesgo colectivo para una compañía de seguros de autos, se analizan dos bases de datos fundamentales: la base de siniestros históricos y la base de pólizas vendidas. Cada base se desagrega por tipo de cobertura para determinar la pérdida potencial mediante el análisis de frecuencia y severidad.
+
+\subsection{Componentes del Modelo de Riesgo Colectivo}
+
+El modelo de riesgo colectivo se fundamenta en los siguientes componentes:
+
+\begin{align*}
+N_j &= \text{Número de siniestros del tipo } j \text{ (Frecuencia)} \\
+X_{i}^{(j)} &= \text{Valor del $i$-ésimo siniestro de la cobertura } j \text{ (Severidad)}
+\end{align*}
+
+donde $j \in \{PPD, PTH, PPH, RC\} = C$ representa los diferentes tipos de cobertura:
+\begin{itemize}
+    \item \textbf{PPD:} Pérdida Parcial por Daños
+    \item \textbf{PTH:} Pérdida Total por Hurto
+    \item \textbf{PPH:} Pérdida parcial por Hurto
+    \item \textbf{RC:} Responsabilidad Civil
+\end{itemize}
+
+\subsection{Pérdida por Tipo de Cobertura}
+
+Para cada tipo de cobertura $j$, la pérdida total se define como:
+
+\begin{equation*}
+S_j = \sum_{i=1}^{N_j} X_i^{(j)}
+\end{equation*}
+
+Esta ecuación representa la suma de todas las pérdidas individuales de tipo $j$, donde $N_j$ es una variable aleatoria que modela la frecuencia de siniestros y $X_i^{(j)}$ son variables aleatorias independientes e idénticamente distribuidas que modelan la severidad.
+
+\subsection{Pérdida Total del Portafolio}
+
+La pérdida agregada total del portafolio de seguros se calcula como:
+
+\begin{equation}
+S = \sum_{j \in C} S_j = \sum_{j \in C} \sum_{i=1}^{N_j} X_j^{(i)}
+\end{equation}
+
+donde $C$ representa el conjunto de todas las coberturas ofrecidas por la compañía.
+
+\medskip
+
+\subsection{Análisis de Exposición y Frecuencia de Siniestros}
+
+En el desarrollo del modelo de riesgo colectivo, es fundamental establecer la relación entre la exposición del portafolio y la frecuencia de siniestros por tipo de cobertura.
+
+\subsubsection{Definición de Variables de Exposición}
+
+Para cada cobertura $j$ en el periodo de análisis, se definen:
+
+\begin{align*}
+E_{t,j} &= \text{Número de pólizas con la cobertura } j \text{ en el día } t \text{ dividido por 365} \\
+N_{t,j} &= \text{Número de siniestros de la cobertura } j \text{ en el día } t
+\end{align*}
+
+La exposición se expresa en términos anuales para normalizar el análisis temporal, donde la división por 365 convierte la exposición diaria en su equivalente anual, pero adimensional.
+
+\subsubsection{Cálculo de la Intensidad de Siniestralidad}
+
+La intensidad de siniestralidad (frecuencia) para la cobertura $j$ durante el período de $T$ días, que se calcula como:
+
+\begin{equation*}
+\lambda_j = \frac{\sum_{t=1}^{T} N_{t,j}}{\sum_{t=1}^{T} E_{t,j}}
+\end{equation*}
+
+Esta métrica representa el número esperado de siniestros por unidad de exposición anual para cada tipo de cobertura.
+
+\subsubsection{Modelado de la Frecuencia Total}
+
+Para el período completo de análisis, se modelará que:
+\begin{align*}
+\mathbb{E}[N_{t,j}] &= \lambda_j \cdot E_{t,j} \\
+N_j &= \sum_{t=1}^{T} N_{t,j} \Rightarrow \mathbb{E}[N_j] = \lambda_j \sum_{t=1}^{T} E_{t,j}
+\end{align*}
+
+donde $N_j$ representa el total de siniestros de la cobertura $j$ durante todo el período de $T$ días. Ahora bien, esto busca modelar el valor esperado de el número de siniestros por unidad de tiempo, como la intensidad por unidad de exposición.
+
+\subsubsection{Análisis de Dispersión}
+
+El parámetro $D_j$ representa la dispersión de $N_j$, fundamental para determinar la distribución apropiada de la frecuencia de siniestros. Esta dispersión se evalúa comparando la varianza observada con la esperanza observada, de tal forma que:
+
+\begin{itemize}
+    \item Si $D_j = 1$: Distribución Poisson (equidispersión)
+    \item Si $D_j > 1$: Distribución Binomial Negativa (sobredispersión)
+    \item Si $D_j < 1$: Posible subdispersión (Tendencia a ser no estocástica)
+\end{itemize}
