@@ -180,6 +180,12 @@ tasks.txt
 # Excluir toda la carpeta de datos
 data/
 
+# En docs/ solo trackear main.tex y las carpetas content/ y config/
+docs/*
+!docs/main.tex
+!docs/content/
+!docs/config/
+
 # Archivos grandes de datos comunes (redundante con data/ pero útil para otros lugares)
 *.xls
 *.xlsx
