@@ -61,6 +61,15 @@ renv/staging/
 
 # Generados por LaTeX/XeTeX/LuaTeX
 *.aux
+*.auxlock
+*.bcf
+*.bbl
+*.blg
+*.run.xml
+*.fdb_latexmk
+*.fls
+*.out
+*.aux
 *.bbl
 *.blg
 *.fdb_latexmk
