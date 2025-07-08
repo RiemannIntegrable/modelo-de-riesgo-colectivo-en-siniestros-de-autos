@@ -1,89 +1,113 @@
 \section{Modelo de riesgo colectivo}
 
-\subsection{Marco Teórico del Modelo}
+\subsection{Idea Central}
 
-En el contexto del modelado de riesgo colectivo para una compañía de seguros de autos, se analizan dos bases de datos fundamentales: la base de siniestros históricos y la base de pólizas vendidas. Cada base se desagrega por tipo de cobertura para determinar la pérdida potencial mediante el análisis de frecuencia y severidad.
+El análisis se fundamenta en la transferencia de conocimiento estadístico desde un portafolio histórico extenso hacia la predicción del comportamiento de un portafolio nuevo y más pequeño. Se utilizan cientos de miles de pólizas vendidas durante 2018 para modelar un portafolio pequeño correspondiente a enero 2019 (contenido en \texttt{Grupo\_P11.xlsx}).\\
 
-\subsection{Componentes del Modelo de Riesgo Colectivo}
+El enfoque central reconoce que no es posible modelar directamente el nuevo portafolio utilizando las mismas variables de conteo que el portafolio del año anterior, dado que las dimensiones y características del portafolio han cambiado significativamente. En su lugar, la metodología se centra en determinar una \textbf{intensidad por unidad de exposición} ($\lambda_j$) para cada tipo de cobertura $j$, calculada a partir de los datos históricos de 2018.\\
 
-El modelo de riesgo colectivo se fundamenta en los siguientes componentes:
+Esta intensidad representa la tasa esperada de siniestros por unidad de exposición anual y constituye un parámetro transferible que puede aplicarse al nuevo portafolio. Una vez estimadas las intensidades $\lambda_j$ del portafolio histórico, estas se aplican al nuevo portafolio utilizando la exposición específica de las nuevas pólizas, permitiendo así proyectar el comportamiento esperado del riesgo sin depender de las características numéricas específicas del portafolio anterior.\\
+
+\subsection{Planteamiento Matemático}
+
+En el contexto del modelado de riesgo colectivo para seguros de automóviles, se analizan dos bases de datos fundamentales que permiten la estimación de parámetros transferibles entre portafolios. Cada base se desagrega por tipo de cobertura donde $j \in \{PPD, PTH, PPH, RC\} = C$ representa los diferentes tipos de cobertura:
+
+\begin{itemize}
+    \item \textbf{PPD:} Pérdida Parcial por Daños
+    \item \textbf{PTH:} Pérdida Total por Hurto
+    \item \textbf{PPH:} Pérdida Parcial por Hurto
+    \item \textbf{RC:} Responsabilidad Civil
+\end{itemize}
+
+\textbf{Variables aleatorias del modelo:} El modelo de riesgo colectivo se fundamenta en los siguientes componentes:
 
 \begin{align*}
 N_j &= \text{Número de siniestros del tipo } j \text{ (Frecuencia)} \\
 X_{i}^{(j)} &= \text{Valor del $i$-ésimo siniestro de la cobertura } j \text{ (Severidad)}
 \end{align*}
 
-donde $j \in \{PPD, PTH, PPH, RC\} = C$ representa los diferentes tipos de cobertura:
-\begin{itemize}
-    \item \textbf{PPD:} Pérdida Parcial por Daños
-    \item \textbf{PTH:} Pérdida Total por Hurto
-    \item \textbf{PPH:} Pérdida parcial por Hurto
-    \item \textbf{RC:} Responsabilidad Civil
-\end{itemize}
-
-\subsection{Pérdida por Tipo de Cobertura}
-
 Para cada tipo de cobertura $j$, la pérdida total se define como:
-
 \begin{equation*}
 S_j = \sum_{i=1}^{N_j} X_i^{(j)}
 \end{equation*}
 
-Esta ecuación representa la suma de todas las pérdidas individuales de tipo $j$, donde $N_j$ es una variable aleatoria que modela la frecuencia de siniestros y $X_i^{(j)}$ son variables aleatorias independientes e idénticamente distribuidas que modelan la severidad.
+donde $N_j$ es una variable aleatoria que modela la frecuencia de siniestros y $X_i^{(j)}$ son variables aleatorias independientes e idénticamente distribuidas que modelan la severidad.\\
 
-\subsection{Pérdida Total del Portafolio}
-
-La pérdida agregada total del portafolio de seguros se calcula como:
-
-\begin{equation}
-S = \sum_{j \in C} S_j = \sum_{j \in C} \sum_{i=1}^{N_j} X_j^{(i)}
-\end{equation}
-
-donde $C$ representa el conjunto de todas las coberturas ofrecidas por la compañía.
-
-\medskip
-
-\subsection{Análisis de Exposición y Frecuencia de Siniestros}
-
-En el desarrollo del modelo de riesgo colectivo, es fundamental establecer la relación entre la exposición del portafolio y la frecuencia de siniestros por tipo de cobertura.
-
-\subsubsection{Definición de Variables de Exposición}
-
-Para cada cobertura $j$ en el periodo de análisis, se definen:
+\textbf{Estimación de intensidades de siniestralidad:} Para el portafolio histórico de 2018, se definen las variables de exposición:
 
 \begin{align*}
-E_{t,j} &= \text{Número de pólizas con la cobertura } j \text{ en el día } t \text{ dividido por 365} \\
+E_{t,j} &= \text{Exposición de la cobertura } j \text{ en el día } t \text{ (en años)} \\
 N_{t,j} &= \text{Número de siniestros de la cobertura } j \text{ en el día } t
 \end{align*}
 
-La exposición se expresa en términos anuales para normalizar el análisis temporal, donde la división por 365 convierte la exposición diaria en su equivalente anual, pero adimensional.
-
-\subsubsection{Cálculo de la Intensidad de Siniestralidad}
-
-La intensidad de siniestralidad (frecuencia) para la cobertura $j$ durante el período de $T$ días, que se calcula como:
-
+La intensidad de siniestralidad para la cobertura $j$ durante el período de $T$ días se calcula como:
 \begin{equation*}
 \lambda_j = \frac{\sum_{t=1}^{T} N_{t,j}}{\sum_{t=1}^{T} E_{t,j}}
 \end{equation*}
 
-Esta métrica representa el número esperado de siniestros por unidad de exposición anual para cada tipo de cobertura.
+Esta métrica representa el número esperado de siniestros por unidad de exposición anual para cada tipo de cobertura.\\
 
-\subsubsection{Modelado de la Frecuencia Total}
+\textbf{Análisis de dispersión del portafolio histórico:} Para determinar la distribución apropiada de las variables de conteo, se evalúa el parámetro de dispersión muestral $D_j$ del portafolio histórico de 2018, calculado como:
 
-Para el período completo de análisis, se modelará que:
+\begin{equation*}
+D_j = \frac{s_j^2}{\bar{N}_{t,j}}
+\end{equation*}
+
+donde:
 \begin{align*}
-\mathbb{E}[N_{t,j}] &= \lambda_j \cdot E_{t,j} \\
-N_j &= \sum_{t=1}^{T} N_{t,j} \Rightarrow \mathbb{E}[N_j] = \lambda_j \sum_{t=1}^{T} E_{t,j}
+\bar{N}_{t,j} &= \frac{1}{T} \sum_{t=1}^{T} N_{t,j} \quad \text{(media muestral de siniestros diarios)} \\
+s_j^2 &= \frac{1}{T-1} \sum_{t=1}^{T} (N_{t,j} - \bar{N}_{t,j})^2 \quad \text{(varianza muestral de siniestros diarios)}
 \end{align*}
 
-donde $N_j$ representa el total de siniestros de la cobertura $j$ durante todo el período de $T$ días. Ahora bien, esto busca modelar el valor esperado de el número de siniestros por unidad de tiempo, como la intensidad por unidad de exposición.
-
-\subsubsection{Análisis de Dispersión}
-
-El parámetro $D_j$ representa la dispersión de $N_j$, fundamental para determinar la distribución apropiada de la frecuencia de siniestros. Esta dispersión se evalúa comparando la varianza observada con la esperanza observada, de tal forma que:
+con $T = 365$ días del período 2018. La interpretación del parámetro es:
 
 \begin{itemize}
-    \item Si $D_j = 1$: Distribución Poisson (equidispersión)
-    \item Si $D_j > 1$: Distribución Binomial Negativa (sobredispersión)
-    \item Si $D_j < 1$: Posible subdispersión (Tendencia a ser no estocástica)
+    \item Si $D_j \approx 1$: Distribución Poisson (equidispersión)
+    \item Si $D_j >>> 1$: Distribución Binomial Negativa (sobredispersión)
+    \item Si $D_j < 1$: Distribución subdispersa o determinística
 \end{itemize}
+
+\textbf{Modelado de la severidad:}
+
+[Espacio reservado para la descripción del modelado de la distribución de severidad]\\
+
+\textbf{Resultados de la modelacion historica}
+
+[Espacio reservado para la descripción de los resultados del modelo historico]
+
+\subsection{Modelo del Nuevo Portafolio}
+
+Una vez estimadas las intensidades $\lambda_j$ del portafolio histórico y determinadas las distribuciones de frecuencia y severidad, se procede a modelar la pérdida agregada del nuevo portafolio.
+
+\textbf{Definición de variables del nuevo portafolio:} Para el portafolio correspondiente a enero 2019 (\texttt{Grupo\_P11.xlsx}), se definen:
+
+\begin{align*}
+E_j^{\text{nuevo}} &= \text{Exposición total de la cobertura } j \text{ del nuevo portafolio (en años)} \\
+N_j^{\text{nuevo}} &= \text{Número de siniestros de la cobertura } j \text{ del nuevo portafolio}
+\end{align*}
+
+\textbf{Transferencia de intensidades:} Siguiendo la idea central de trasladar la intensidad histórica por unidad de exposición, las variables de conteo del nuevo portafolio se modelan como:
+
+\begin{equation*}
+\mathbb{E}[N_j^{\text{nuevo}}] = \lambda_j \cdot E_j^{\text{nuevo}}
+\end{equation*}
+
+Las variables $N_j^{\text{nuevo}}$ siguen la misma distribución que las $N_j$ del portafolio histórico, determinada por los valores de dispersión $D_j$ calculados anteriormente:\\
+
+[Espacio reservado para especificar las distribuciones exactas según los resultados del análisis histórico]\\
+
+\textbf{Pérdida agregada del nuevo portafolio:} La pérdida total por cobertura para el nuevo portafolio se define como:
+\begin{equation*}
+S_j^{\text{nuevo}} = \sum_{i=1}^{N_j^{\text{nuevo}}} X_i^{(j)}
+\end{equation*}
+
+La pérdida agregada total del nuevo portafolio, que representa los pagos totales que realizará la aseguradora, se calcula como:
+\begin{equation}
+S^{\text{nuevo}} = \sum_{j \in C} S_j^{\text{nuevo}} = \sum_{j \in C} \sum_{i=1}^{N_j^{\text{nuevo}}} X_j^{(i)}
+\end{equation}
+
+donde $C$ representa el conjunto de todas las coberturas ofrecidas por la compañía.\\
+
+Esta formulación permite proyectar el comportamiento del riesgo del nuevo portafolio basándose en los parámetros estimados del portafolio histórico, trasladando las intensidades de siniestralidad pero aplicándolas a la exposición específica del nuevo portafolio.\\
+
+[Espacio reservado para la presentación de resultados específicos del modelo aplicado al nuevo portafolio]
