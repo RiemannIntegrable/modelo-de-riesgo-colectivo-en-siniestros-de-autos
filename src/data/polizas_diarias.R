@@ -22,7 +22,7 @@ polizas_diarias <- function(polizas){
             if (nrow(polizas_vigentes) > 0) {
                 resultado$Numero_polizas[i] <- nrow(polizas_vigentes)
                 
-                vigencias <- polizas_vigentes$Fecha_fin - fecha + 1
+                vigencias <- as.numeric(difftime(polizas_vigentes$Fecha_fin, fecha, units = "days")) + 1
                 vigencias <- pmax(vigencias, 1)
                 resultado$Exposicion[i] <- sum(as.numeric(vigencias))
             }
