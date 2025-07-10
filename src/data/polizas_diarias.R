@@ -24,7 +24,7 @@ polizas_diarias <- function(polizas){
                 
                 vigencias <- polizas_vigentes$Fecha_fin - fecha + 1
                 vigencias <- pmax(vigencias, 1)
-                resultado$Exposicion[i] <- sum(as.numeric(vigencias)) / 365
+                resultado$Exposicion[i] <- sum(as.numeric(vigencias))
             }
         }
         
