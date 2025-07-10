@@ -8,7 +8,6 @@ polizas_diarias <- function(polizas){
         resultado <- data.frame(
             Fecha = fechas_2018,
             Numero_polizas = 0,
-            Suma_primas = 0,
             Exposicion = 0
         )
         
@@ -22,10 +21,9 @@ polizas_diarias <- function(polizas){
             
             if (nrow(polizas_vigentes) > 0) {
                 resultado$Numero_polizas[i] <- nrow(polizas_vigentes)
-                resultado$Suma_primas[i] <- sum(polizas_vigentes$Prima_ajustada)
                 
-                vigencias <- pmin(polizas_vigentes$Fecha_fin, as.Date("2018-12-31")) - fecha
-                vigencias <- pmax(vigencias, 0)
+                vigencias <- polizas_vigentes$Fecha_fin - fecha + 1
+                vigencias <- pmax(vigencias, 1)
                 resultado$Exposicion[i] <- sum(as.numeric(vigencias)) / 365
             }
         }
@@ -33,10 +31,10 @@ polizas_diarias <- function(polizas){
         return(resultado)
     }
     
-    PPD <- calcular_cobertura(polizas, "Perdida_parcial_danos")
-    PTH <- calcular_cobertura(polizas, "Perdida_total_hurto")
-    PPH <- calcular_cobertura(polizas, "Perdida_parcial_hurto")
-    RC <- calcular_cobertura(polizas, "Responsabilidad_civil")
+    PPD <- calcular_cobertura(polizas, "ppd")
+    PTH <- calcular_cobertura(polizas, "pth")
+    PPH <- calcular_cobertura(polizas, "pph")
+    RC <- calcular_cobertura(polizas, "rc")
     
     return(list(PPD = PPD, PTH = PTH, PPH = PPH, RC = RC))
 }
