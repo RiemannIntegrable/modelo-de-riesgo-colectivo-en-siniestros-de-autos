@@ -24,12 +24,12 @@ Para la frecuencia, se encuentra por máxima verosimilitud, pruebas de bondad de
 
 Se extrae una constante de intensidad para cada cobertura:
 \begin{equation*}
-\lambda_c = \frac{\text{Promedio de siniestros reportados por la cobertura } c \text{ por unidad de tiempo}}{\text{Exposición promedio del portafolio por la cobertura } c \text{ por unidad de tiempo}}
+\lambda_c = \frac{\text{Promedio de siniestros reportados por la cobertura } c \text{por unidad de tiempo}}{\text{Promedio de polizas vigentes en el portafolio por la cobertura } c \text{ por unidad de tiempo}}
 \end{equation*}
 
 Se supone que esta intensidad por unidad de exposición se mantiene constante entre 2018 y 2019. Así, para el nuevo portafolio se modela:
 \begin{equation*}
-\mathbb{E}[N^{(c)}] = \lambda_c \times \text{Exposición promedio del nuevo portafolio por la cobertura } c \text{ por unidad de tiempo}
+\mathbb{E}[N^{(c)}] = \lambda_c \times \text{Promedio de polizas vigentes del nuevo portafolio por la cobertura } c \text{ por unidad de tiempo}
 \end{equation*}
 
 Para concluir con el modelo de frecuencia, se supone que entre 2018 y 2019 las distribuciones de las frecuencias son las mismas. Por lo tanto, usando el supuesto anterior y el índice de sobredispersión que también se supone constante, se encuentran los parámetros de las distribuciones de frecuencia del nuevo portafolio.

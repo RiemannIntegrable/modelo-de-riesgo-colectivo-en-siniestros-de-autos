@@ -14,11 +14,9 @@
 
 ## 👥 **Equipo**
 
-| Estudiante | Email | Rol |
-|------------|-------|-----|
-| José Miguel Acuña Hernández | jacunah@unal.edu.co | Desarrollador Principal |
-| Andrés Steven Puertas Londoño | apuertasl@unal.edu.co | Analista de Datos |
-| Cristian Camilo González Morales | crigonzalezmo@unal.edu.co | Modelado Estadístico |
+| Estudiante | Email |
+|------------|-------|
+| José Miguel Acuña Hernández | jacunah@unal.edu.co |
 
 **Docente:** Alejandra Sánchez Vásquez  
 **Materia:** Teoría del Riesgo Actuarial 2025-I  
