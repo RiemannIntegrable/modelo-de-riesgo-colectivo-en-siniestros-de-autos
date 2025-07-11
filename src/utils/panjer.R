@@ -1,4 +1,4 @@
-panjer <- function(p, q, dist, params = c()){
+panjer <- function(p, q0, dist, params = c()){
     # Validar distribución primero
     if(!dist %in% c("poisson", "binomial negativa")){
         print("Distribucion de conteo no aceptada")
@@ -64,7 +64,7 @@ panjer <- function(p, q, dist, params = c()){
     # Inicializar la recursión
     # f_S(0) = P(N=0) si P(X=0) = 0
     if(p[1] == 0){
-        fs <- c(q[1])  # P(S=0) = P(N=0)
+        fs <- c(q0)  # P(S=0) = P(N=0)
     } else {
         # Si P(X=0) > 0, usar función generatriz de momentos
         # f_S(0) = M_N(ln(p_0))
@@ -93,7 +93,17 @@ panjer <- function(p, q, dist, params = c()){
         
         # Criterio de parada: suma acumulada muy cercana a 1
         suma_acumulada <- sum(fs)
+        
+        # Imprimir progreso cada 100 iteraciones
+        if(s %% 100 == 0) {
+            porcentaje <- suma_acumulada * 100
+            cat("Iteración", s, "- Suma acumulada:", round(porcentaje, 4), "%\n")
+            flush.console()
+        }
+        
         if(suma_acumulada >= tolerancia_suma){
+            cat("Convergencia alcanzada en iteración", s, "- Suma final:", round(suma_acumulada * 100, 6), "%\n")
+            flush.console()
             break
         }
         

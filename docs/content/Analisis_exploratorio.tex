@@ -1,0 +1,31 @@
+\section{Análisis exploratorio}
+
+El análisis exploratorio de los datasets proporcionados reveló varias limitaciones estructurales que condicionaron la metodología del proyecto y llevaron a redefinir el alcance del modelo de riesgo colectivo.
+
+\subsection{Ausencia de identificadores únicos}
+
+La principal limitación identificada fue la ausencia de una columna identificadora única para cada póliza en los datasets. Esta deficiencia impide establecer una relación directa entre las pólizas del portafolio histórico y los siniestros reportados, lo cual habría permitido identificar qué pólizas experimentaron siniestros y cuáles no. En condiciones ideales, esta información habría facilitado la construcción de muestras aleatorias del tamaño del nuevo portafolio para realizar el modelo de forma rigurosa.\\
+
+Como consecuencia de esta limitación, fue necesario utilizar las fechas como variable de agrupación, organizando la información por días o semanas para construir las muestras. Esta metodología produce una variable aleatoria $S$ que representa la pérdida agregada por unidad de tiempo, en lugar de la pérdida agregada por portafolio específico.
+
+\subsection{Desalineación temporal de los datos}
+
+El análisis temporal reveló que los siniestros se concentran casi en su totalidad durante 2018, con algunos registros aislados de enero de 2017. En contraste, las pólizas del portafolio histórico tienen fechas de inicio que van desde 2016 hasta 2020. Esta desalineación temporal, combinada con la ausencia de identificadores únicos, imposibilita determinar con exactitud la vigencia inicial y final del portafolio de siniestros.\\
+
+Para abordar esta limitación, se decidió tomar como input todas las pólizas que estuvieron vigentes durante 2018 y considerar únicamente los siniestros ocurridos en ese mismo año para el análisis.
+
+\subsection{Selección de la variable de severidad}
+
+Para modelar la siniestralidad completa y permitir el cálculo posterior de un deducible adecuado para el portafolio, se seleccionó la variable \texttt{VLRSININCUR} como medida de severidad. Esta variable representa el valor incurrido del siniestro, proporcionando una medida integral del costo para la aseguradora.
+
+\subsection{Ajuste por inflación}
+
+Las pólizas vigentes del nuevo portafolio están vendidas desde enero de 2019, mientras que la siniestralidad histórica corresponde principalmente a 2018. Para modelar adecuadamente los valores a los que se enfrentaría la compañía como pérdida en 2019, fue necesario ajustar la siniestralidad histórica al valor presente utilizando factores de inflación del Índice de Precios al Consumidor (IPC) colombiano.
+
+\subsection{Consolidación de coberturas}
+
+El análisis de las coberturas reveló inconsistencias entre los tres datasets proporcionados. Mientras el portafolio histórico y las pólizas vigentes contemplan 5 coberturas posibles (PTD, PPD, PH, PPH, RC), los siniestros reportan únicamente 4 coberturas específicas: PTH (Pérdida Total por Hurto), PPD (Pérdida Parcial por Daños), PPH (Pérdida Parcial por Hurto) y RC (Responsabilidad Civil), siendo esta última subdividida en RC BIENES y RC PERS.\\
+
+La cobertura PTD no presenta registros en la base de siniestros, mientras que las coberturas PH del portafolio parecen corresponder a la combinación de PTH y PPH en los siniestros. Por esta razón, se decidió modelar únicamente 4 coberturas consolidadas: PPD, PPH, PTH y RC (unificando RC BIENES y RC PERS).\\
+
+Esta redefinición del problema, aunque impuesta por las limitaciones de los datos, resulta metodológicamente sólida para el objetivo de modelar la pérdida agregada diaria y estimar los parámetros de distribución necesarios para el análisis actuarial del nuevo portafolio.

@@ -318,6 +318,7 @@ dependencies:
   - r-farver=2.1.0=r42h884c59f_0
   - r-fastmap=1.2.0=r42ha18555a_0
   - r-fints=0.4_6=r42h142f84f_0
+  - r-fitdistrplus=1.1_11=r42hc72bb7e_1
   - r-flashclust=1.01_2=r42h8da6f51_1007
   - r-fma=2.5=r42hc72bb7e_1
   - r-fontawesome=0.5.2=r42hc72bb7e_0
@@ -386,6 +387,7 @@ dependencies:
   - r-lme4=1.1_35.1=r42ha503ecb_0
   - r-lmtest=0.9_40=r42h8da6f51_1
   - r-lpsolve=5.6.20=r42h57805ef_0
+  - r-lsei=1.3_0=r42h640688f_0
   - r-lubridate=1.9.3=r42h57805ef_0
   - r-magick=2.7.4=r42h38f115c_0
   - r-magrittr=2.0.3=r42h76d94ec_0
@@ -412,6 +414,7 @@ dependencies:
   - r-nloptr=2.0.3=r42hb13c81a_1
   - r-nnet=7.3_17=r42h76d94ec_0
   - r-nortest=1.0_4=r42h142f84f_0
+  - r-npsurv=0.5_0=r42hc72bb7e_2
   - r-numderiv=2016.8_1.1=r42h6115d3f_0
   - r-olsrr=0.5.3=r42ha503ecb_2
   - r-openssl=2.1.1=r42hb353fa6_0
