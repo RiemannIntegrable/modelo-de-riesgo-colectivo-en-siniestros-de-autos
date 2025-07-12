@@ -177,8 +177,8 @@ tasks.txt
 *.nb.html
 *_files/
 
-# Excluir toda la carpeta de datos
-data/
+# Excluir carpeta de datos del nivel raíz (no src/data/)
+/data/
 
 # En docs/ solo trackear main.tex y las carpetas content/ y config/
 docs/*
