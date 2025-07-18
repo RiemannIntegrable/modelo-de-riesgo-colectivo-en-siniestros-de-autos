@@ -5,107 +5,28 @@
 *Análisis actuarial de portafolios de seguros de automóviles*
 
 [![R](https://img.shields.io/badge/R-4.2.3-blue.svg)](https://www.r-project.org/)
-[![LaTeX](https://img.shields.io/badge/LaTeX-Document-green.svg)](https://www.latex-project.org/)
-[![Universidad Nacional](https://img.shields.io/badge/Universidad-Nacional%20de%20Colombia-red.svg)](https://unal.edu.co/)
+[![Conda](https://img.shields.io/badge/Conda-Environment-green.svg)](https://conda.io/)
+[![Jupyter](https://img.shields.io/badge/Jupyter-Notebooks-orange.svg)](https://jupyter.org/)
+[![LaTeX](https://img.shields.io/badge/LaTeX-Document-red.svg)](https://www.latex-project.org/)
+[![Universidad Nacional](https://img.shields.io/badge/Universidad-Nacional%20de%20Colombia-yellow.svg)](https://unal.edu.co/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](#licencia)
 
 </div>
 
 ---
 
-## 👥 **Equipo**
+## 👥 **Autoría**
 
-| Estudiante | Email |
-|------------|-------|
-| José Miguel Acuña Hernández | jacunah@unal.edu.co |
+### 🎓 **Estudiante**
+| Nombre | Email | GitHub |
+|--------|-------|---------|
+| José Miguel Acuña Hernández | jacunah@unal.edu.co | [@RiemannIntegrable](https://github.com/RiemannIntegrable) |
 
+### 👩‍🏫 **Supervisión Académica**
 **Docente:** Alejandra Sánchez Vásquez  
 **Materia:** Teoría del Riesgo Actuarial 2025-I  
-**Universidad:** Universidad Nacional de Colombia
-
----
-
-## 📋 **Descripción**
-
-Este proyecto implementa modelos de riesgo colectivo para analizar portafolios de seguros de automóviles. Utilizamos datos reales de pólizas y siniestros para construir modelos actuariales que estiman la pérdida agregada por unidad de tiempo.
-
-### 🎯 **Objetivo Principal**
-
-Implementar modelos de riesgo colectivo para estimar la distribución de la variable aleatoria S (pérdida agregada) de un portafolio de seguros de automóviles, calibrando parámetros de frecuencia y severidad mediante técnicas estadísticas.
-
----
-
-## 🔍 **Análisis Exploratorio**
-
-### 🚧 **Limitaciones Identificadas**
-
-- **Sin identificadores únicos**: Las pólizas no tienen IDs únicos, obligando a modelar por unidad temporal
-- **Desalineación temporal**: Siniestros en 2018 vs pólizas 2016-2020
-- **Coberturas inconsistentes**: 5 coberturas en pólizas vs 4 en siniestros
-- **Ajuste por inflación**: Necesario para comparar 2018 vs 2019
-
-### 📊 **Decisiones Metodológicas**
-
-- Modelar pérdida agregada **por día** en lugar de por portafolio
-- Usar solo datos con exposición en 2018
-- Consolidar 4 coberturas: PPD, PPH, PTH, RC
-- Ajustar valores monetarios con IPC a enero 2019
-
----
-
-## 🧹 **Limpieza de Datos**
-
-### 📁 **Histórico de Pólizas**
-- ✅ Estandarización de nombres de columnas
-- ✅ Eliminación de PTD (sin siniestros registrados)
-- ✅ Filtro por exposición en 2018
-- ✅ Umbral de prima mínima: $459,500 (SOAT 2016)
-- ✅ Eliminación de pólizas < 60 días duración
-- **Resultado:** 319,298 pólizas procesadas
-
-### 📈 **Histórico de Siniestros**
-- ✅ Consolidación RC BIENES + RC PERS → RC
-- ✅ Solo siniestros de 2018
-- ✅ Variable de severidad: `VLRSININCUR`
-- ✅ Ajuste IPC mensual a enero 2019
-- ✅ Filtros por cobertura:
-  - PPH/PPD: > $70,000
-  - PTH: > $3,000,000  
-  - RC: > $500,000
-
-### 🆕 **Nuevo Portafolio**
-- ✅ Eliminación de 6 duplicados (300 → 294 pólizas)
-- ✅ Corrección duración 1 día → 366 días
-- ✅ Conservación de primas bajas (pagos mensuales)
-- ✅ Segmentación por cobertura
-
----
-
-## 🔬 **Modelación**
-
-### 📐 **Marco Teórico**
-
-Definimos **C = {PPD, PPH, PTH, RC}** como conjunto de coberturas.
-
-Para cada cobertura *c*:
-- **X^(c)**: Severidad de un siniestro
-- **N^(c)**: Número de siniestros por unidad de tiempo  
-- **S^(c) = Σ X^(c)_k**: Pérdida agregada por cobertura
-- **S = Σ S^(c)**: Pérdida agregada total
-
-### 🎲 **Distribuciones**
-
-**Frecuencia:**
-- 🎯 Poisson para coberturas con equidispersión
-- 📊 Binomial Negativa para sobredispersión
-
-**Severidad:**
-- 📈 Distribuciones empíricas (frecuencias relativas)
-- 🧮 Ajuste paramétrico: Gamma, Normal, LogNormal, Weibull
-
-### ⚙️ **Algoritmos**
-- 🔄 **Panjer**: Recursión para distribuciones discretas
-- ⚡ **FFT**: Transformada rápida de Fourier
-- 🔗 **Convolución**: Para pérdida agregada total
+**Universidad:** Universidad Nacional de Colombia  
+**Facultad:** Ciencias - Departamento de Matemáticas
 
 ---
 
@@ -114,20 +35,62 @@ Para cada cobertura *c*:
 ```
 📦 modelo-de-riesgo-colectivo-en-siniestros-de-autos/
 ├── 📁 data/
-│   ├── 📁 input/           # Datos originales (.xlsx, .txt)
-│   ├── 📁 processed/       # Datos procesados (.csv)
-│   └── 📁 output/          # Resultados del análisis
+│   ├── 📁 input/                    # 📊 Datos originales
+│   │   ├── Grupo_P11.xlsx           # Datos de pólizas históricas
+│   │   ├── Siniestros_Hist.xlsx     # Histórico de siniestros
+│   │   ├── Historico_IPC_Factor_Ajuste.xlsx # Factores de ajuste IPC
+│   │   ├── factores_ipc.csv         # Factores IPC en formato CSV
+│   │   ├── IPC_Update.csv           # Actualización datos IPC
+│   │   ├── polizas.csv              # Pólizas procesadas
+│   │   └── polizas_v2.txt           # Pólizas formato texto
+│   ├── 📁 processed/                # ✅ Datos procesados por cobertura
+│   │   ├── polizas_ppd.csv          # Pólizas Pérdida Parcial Daños
+│   │   ├── polizas_pth.csv          # Pólizas Pérdida Total Hurto
+│   │   ├── polizas_pph.csv          # Pólizas Pérdida Parcial Hurto
+│   │   ├── polizas_rc.csv           # Pólizas Responsabilidad Civil
+│   │   ├── siniestros_ppd.csv       # Siniestros PPD
+│   │   ├── siniestros_pth.csv       # Siniestros PTH
+│   │   ├── siniestros_pph.csv       # Siniestros PPH
+│   │   └── siniestros_rc.csv        # Siniestros RC
+│   └── 📁 output/                   # 📈 Resultados del análisis
+│       ├── perdidas_agregadas_*.csv # Distribuciones de pérdida agregada
+│       ├── distribucion_severidad_*.csv # Distribuciones de severidad
+│       ├── validacion_*.csv         # Datos de validación FFT vs Panjer
+│       └── perdidas_agregadas_total.csv # Distribución total del portafolio
 ├── 📁 src/
-│   ├── 📁 data/           # Funciones de procesamiento
-│   ├── 📁 models/         # Modelos estadísticos
-│   ├── 📁 utils/          # Utilidades (Panjer, tests)
-│   └── 📁 test/           # Tests unitarios
-├── 📁 notebooks/          # Análisis en Jupyter (.ipynb)
-├── 📁 docs/              # Documentación LaTeX
-│   ├── 📁 config/        # Configuración LaTeX
-│   ├── 📁 content/       # Secciones del documento
-│   └── main.tex          # Documento principal
-└── 📁 images/            # Gráficos y visualizaciones
+│   ├── 📁 data/                     # 🔧 Funciones de procesamiento
+│   │   ├── polizas_diarias.R        # Cálculo de exposición diaria
+│   │   └── ajuste_prima_ipc.R       # Ajuste por inflación IPC
+│   ├── 📁 models/                   # 📊 Modelos estadísticos
+│   ├── 📁 utils/                    # ⚙️ Algoritmos y utilidades
+│   │   ├── Panjer.R                 # Algoritmo de Panjer
+│   │   └── FFT_RiesgoColectivo.R    # Algoritmo FFT para riesgo colectivo
+│   └── 📁 test/                     # 🧪 Tests unitarios
+│       ├── test_polizas_diarias.R   # Tests para cálculos diarios
+│       └── test_ajuste_prima_ipc.R  # Tests para ajuste IPC
+├── 📁 notebooks/                    # 📓 Análisis en Jupyter
+│   ├── limpieza_de_polizas.ipynb    # Limpieza de datos de pólizas
+│   ├── limpieza_de_siniestros.ipynb # Limpieza de datos de siniestros
+│   ├── limpieza_de_vigentes.ipynb   # Procesamiento de pólizas vigentes
+│   ├── modelo_de_frecuencia.ipynb   # Modelado de frecuencia de siniestros
+│   ├── modelo_de_severidad.ipynb    # Modelado de severidad de siniestros
+│   ├── panjer.ipynb                 # Implementación algoritmo Panjer
+│   └── convolucion_final.ipynb      # Convolución final del portafolio
+├── 📁 docs/                         # 📄 Documentación técnica
+│   ├── 📁 config/                   # Configuración LaTeX
+│   ├── 📁 content/                  # Secciones del documento
+│   │   ├── Introduccion.tex         # Introducción del proyecto
+│   │   ├── Metodologia.tex          # Metodología empleada
+│   │   ├── Implementacion.tex       # Detalles de implementación
+│   │   ├── Resultados.tex           # Resultados y análisis
+│   │   └── Conclusiones.tex         # Conclusiones y recomendaciones
+│   └── main.tex                     # Documento principal LaTeX
+├── 📁 images/                       # 📊 Gráficos y visualizaciones
+│   ├── distribucion_severidad_*.png # Distribuciones de severidad
+│   ├── ajuste_lognormal_*.png       # Ajustes de distribución lognormal
+│   └── validacion_*.png             # Gráficos de validación
+├── environment.yml                  # 🐍 Configuración entorno Conda
+└── README.md                        # 📖 Este archivo
 ```
 
 ---
@@ -136,99 +99,95 @@ Para cada cobertura *c*:
 
 ### 📋 **Prerequisitos**
 
-- R >= 4.2.3
-- Conda/Miniconda
+- 🐧 **Sistema Operativo**: Linux (Ubuntu, WSL, etc.)
+- 🐍 **Conda/Miniconda**: Para gestión de entornos
+- 📝 **Editor de Código**: VSCode, Cursor, o similar con soporte para Jupyter
+- 📊 **R**: >= 4.2.3 (se instala automáticamente con el entorno)
 
 ### ⚡ **Setup Rápido**
 
 ```bash
-# Clonar repositorio
+# 1. Clonar repositorio
 git clone https://github.com/RiemannIntegrable/modelo-de-riesgo-colectivo-en-siniestros-de-autos.git
 cd modelo-de-riesgo-colectivo-en-siniestros-de-autos
 
-# Crear entorno conda
+# 2. Crear entorno conda (IMPORTANTE: usar conda, no mamba)
 conda env create -f environment.yml
 conda activate Renv
 
-# Ejecutar notebooks
+# 3. Verificar instalación
+R --version
+jupyter --version
+
+# 4. Iniciar Jupyter Lab
 jupyter lab
 ```
 
-### 📊 **Funciones Principales**
+### 📓 **Orden de Ejecución de Notebooks**
+
+**⚠️ IMPORTANTE**: Los notebooks deben ejecutarse en este orden específico:
+
+#### 🧹 **Fase 1: Limpieza de Datos**
+```
+1. 📋 limpieza_de_polizas.ipynb      # Procesar datos de pólizas
+2. 📊 limpieza_de_siniestros.ipynb   # Procesar datos de siniestros  
+3. 📈 limpieza_de_vigentes.ipynb     # Procesar pólizas vigentes
+```
+
+#### 🎯 **Fase 2: Modelado Estadístico**
+```
+4. 📊 modelo_de_frecuencia.ipynb     # Estimar distribuciones de frecuencia
+5. 📈 modelo_de_severidad.ipynb      # Estimar distribuciones de severidad
+```
+
+#### ⚙️ **Fase 3: Modelos de Riesgo Colectivo**
+```
+6. 🔄 panjer.ipynb                   # Aplicar algoritmo de Panjer
+7. 🔗 convolucion_final.ipynb        # Convolución final del portafolio
+```
+
+### 🔧 **Funciones Principales**
 
 ```r
-# Cargar funciones
+# Cargar funciones de procesamiento
 source("src/data/polizas_diarias.R")
-source("src/utils/panjer.R")
+source("src/data/ajuste_prima_ipc.R")
 
-# Calcular exposición diaria
-exposicion <- polizas_diarias(polizas_limpias)
+# Calcular exposición diaria por cobertura
+exposicion_diaria <- polizas_diarias(polizas_limpias)
+
+# Ajustar primas por inflación IPC
+primas_ajustadas <- ajuste_prima_ipc(polizas_raw)
+
+# Cargar algoritmos de riesgo colectivo
+source("src/utils/Panjer.R")
+source("src/utils/FFT_RiesgoColectivo.R")
 
 # Aplicar algoritmo de Panjer
-resultado <- panjer(p_severidad, q0, "poisson", lambda)
+resultado_panjer <- Panjer(
+  prob_severidad = severidad_discretizada,
+  dist_frecuencia = "poisson",
+  parametros_frecuencia = list(lambda = 0.123),
+  x_scale = 10000,
+  maxit = 50000
+)
+
+# Aplicar algoritmo FFT
+resultado_fft <- FFT_RiesgoColectivo(
+  prob_severidad = severidad_discretizada,
+  dist_frecuencia = "poisson", 
+  parametros_frecuencia = list(lambda = 0.123),
+  x_scale = 10000,
+  n_points = 50000
+)
 ```
 
----
+### 🎯 **Configuración del Entorno**
 
-## 📈 **Resultados**
+El archivo `environment.yml` incluye:
 
-*Esta sección se completará una vez finalizado el análisis*
-
----
-
-## ❓ **Preguntas de Investigación**
-
-*Esta sección se completará según los objetivos específicos del proyecto*
-
----
-
-## 🧪 **Testing**
-
-```bash
-# Ejecutar tests unitarios
-cd src/test/
-Rscript test_polizas_diarias.R
-Rscript test_ajuste_prima_ipc.R
-```
-
----
-
-## 📚 **Documentación**
-
-El documento técnico completo se encuentra en `docs/main.tex`. Para compilar:
-
-```bash
-cd docs/
-pdflatex main.tex
-pdflatex main.tex  # Ejecutar dos veces para referencias cruzadas
-```
-
----
-
-## 🤝 **Contribuciones**
-
-Este es un proyecto académico de la Universidad Nacional de Colombia. Para sugerencias o preguntas, contactar a los autores.
-
----
-
-## 📄 **Licencia**
-
-Este proyecto es de uso académico para la materia Teoría del Riesgo Actuarial de la Universidad Nacional de Colombia.
-
----
-
-## 🙏 **Agradecimientos**
-
-- **Profesora Alejandra Sánchez Vásquez** por la guía y supervisión
-- **Universidad Nacional de Colombia** por proporcionar los recursos
-- **Departamento de Matemáticas** por el apoyo académico
-
----
-
-<div align="center">
-
-**🎓 Universidad Nacional de Colombia - Facultad de Ciencias - Departamento de Matemáticas**
-
-*Teoría del Riesgo Actuarial 2025-I*
-
-</div>
+- **R 4.2.3**: Lenguaje principal
+- **Paquetes estadísticos**: tidyverse, ggplot2, dplyr, forecast
+- **Paquetes actuariales**: actuar (para algoritmo Panjer)
+- **Jupyter**: Para notebooks interactivos
+- **Testing**: testthat para pruebas unitarias

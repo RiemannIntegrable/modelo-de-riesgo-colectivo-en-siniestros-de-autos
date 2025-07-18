@@ -180,6 +180,12 @@ tasks.txt
 # Excluir carpeta de datos del nivel raíz (no src/data/)
 /data/
 
+# Pero permitir archivos específicos de input que deben ser trackeados
+!data/input/Grupo_P11.xlsx
+!data/input/Siniestros_Hist.xlsx
+!data/input/polizas_v2.txt
+!data/input/factores_ipc.csv
+
 # En docs/ solo trackear main.tex y las carpetas content/ y config/
 docs/*
 !docs/main.tex
