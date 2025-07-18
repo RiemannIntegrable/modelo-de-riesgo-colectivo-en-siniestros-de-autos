@@ -73,10 +73,10 @@ Para cada cobertura se calculó la intensidad $\lambda_c$ como el cociente entre
 Aplicando las intensidades calculadas al nuevo portafolio y manteniendo los índices de sobredispersión, se obtuvieron las siguientes distribuciones de frecuencia:
 
 \begin{align}
-N^{(PPD)} &\sim \text{BinNeg}(r = 0.00419, p = 0.758)\\
+N^{(PPD)} &\sim \text{BinNeg}(r = 0.00419, p = 0.00133)\\
 N^{(PPH)} &\sim \text{Poisson}(\lambda = 0.00134)\\
 N^{(PTH)} &\sim \text{Poisson}(\lambda = 0.00122)\\
-N^{(RC)} &\sim \text{BinNeg}(r = 0.01863, p = 0.800)
+N^{(RC)} &\sim \text{BinNeg}(r = 0.01863, p = 0.00464)
 \end{align}
 
 \subsection{Severidad}
@@ -110,7 +110,7 @@ Al cargar los datos de severidad por cobertura desde los archivos procesados, se
     \end{subfigure}
 \end{figure}
 
-Como se evidencia en la Figura \ref{fig:severidad_original}, todas las coberturas presentaron distribuciones con colas extremadamente pesadas y concentración excesiva en valores atípicos, haciendo necesario un proceso de filtrado robusto antes de cualquier intento de modelación.
+Como se evidencia en la figura, todas las coberturas presentaron distribuciones con colas extremadamente pesadas y concentración excesiva en valores atípicos, haciendo necesario un proceso de filtrado robusto antes de cualquier intento de modelación.
 
 \subsubsection{Filtrado de outliers con Z-score robusto}
 

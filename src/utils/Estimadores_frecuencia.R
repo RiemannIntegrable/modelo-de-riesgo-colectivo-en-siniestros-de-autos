@@ -83,10 +83,61 @@ Estimadores_frecuencia <- function(datos) {
   
   ct_result <- test_cameron_trivedi(datos)
   
-  mejor_distribucion <- ifelse(ajuste_poisson$aic < ajuste_nbinom$aic, "Poisson", "Binomial Negativa")
-  mejores_parametros <- ifelse(mejor_distribucion == "Poisson", 
+  # Determinar mejor distribución por AIC
+  mejor_distribucion_aic <- ifelse(ajuste_poisson$aic < ajuste_nbinom$aic, "Poisson", "Binomial Negativa")
+  
+  # Determinar distribución recomendada basada en criterios estadísticos
+  distribucion_recomendada <- function() {
+    # Criterio 1: Sobredispersión significativa
+    sobredispersion_significativa <- (sobredispersion > 1.2 && ct_result$p_valor < 0.05)
+    
+    # Criterio 2: Bondad de ajuste
+    poisson_buen_ajuste <- (bondad_poisson$p_valor > 0.05)
+    nbinom_buen_ajuste <- (bondad_nbinom$p_valor > 0.05)
+    
+    # Criterio 3: AIC (solo como desempate)
+    mejor_aic <- (ajuste_poisson$aic < ajuste_nbinom$aic)
+    
+    # Lógica de decisión
+    if (sobredispersion_significativa) {
+      # Si hay sobredispersión significativa, usar Binomial Negativa
+      return("Binomial Negativa")
+    } else if (poisson_buen_ajuste && !nbinom_buen_ajuste) {
+      # Si solo Poisson tiene buen ajuste, usar Poisson
+      return("Poisson")
+    } else if (!poisson_buen_ajuste && nbinom_buen_ajuste) {
+      # Si solo Binomial Negativa tiene buen ajuste, usar BN
+      return("Binomial Negativa")
+    } else if (poisson_buen_ajuste && nbinom_buen_ajuste) {
+      # Si ambas tienen buen ajuste, usar la más simple (Poisson) si no hay sobredispersión
+      if (sobredispersion <= 1.2) {
+        return("Poisson")
+      } else {
+        return("Binomial Negativa")
+      }
+    } else {
+      # Si ninguna tiene buen ajuste, usar la de mejor AIC
+      return(ifelse(mejor_aic, "Poisson", "Binomial Negativa"))
+    }
+  }
+  
+  distribucion_recomendada_final <- distribucion_recomendada()
+  
+  # Parámetros de la distribución recomendada
+  parametros_recomendados <- if (distribucion_recomendada_final == "Poisson") {
+    ajuste_poisson$parametros
+  } else {
+    ajuste_nbinom$parametros
+  }
+  
+  # Formato de texto de parámetros
+  mejores_parametros <- ifelse(mejor_distribucion_aic == "Poisson", 
                                sprintf("λ = %.4f", ajuste_poisson$parametros$lambda),
                                sprintf("size = %.4f, μ = %.4f", ajuste_nbinom$parametros$size, ajuste_nbinom$parametros$mu))
+  
+  parametros_recomendados_texto <- ifelse(distribucion_recomendada_final == "Poisson", 
+                                         sprintf("λ = %.4f", ajuste_poisson$parametros$lambda),
+                                         sprintf("size = %.4f, μ = %.4f", ajuste_nbinom$parametros$size, ajuste_nbinom$parametros$mu))
   
   cat("═══════════════════════════════════════════════════════════════════════════\n")
   cat("                           ESTIMADORES DE FRECUENCIA                        \n")
@@ -121,14 +172,33 @@ Estimadores_frecuencia <- function(datos) {
   
   cat("\n4. RESUMEN Y RECOMENDACIÓN:\n")
   cat("═══════════════════════════════════════════════════════════════════════════\n")
-  cat(sprintf("MEJOR DISTRIBUCIÓN: %s (%s)\n", mejor_distribucion, mejores_parametros))
+  cat(sprintf("MEJOR POR AIC: %s (%s)\n", mejor_distribucion_aic, mejores_parametros))
+  cat(sprintf("DISTRIBUCIÓN RECOMENDADA: %s (%s)\n", distribucion_recomendada_final, parametros_recomendados_texto))
   
+  # Explicar la razón de la recomendación
+  cat("\nCRITERIOS DE DECISIÓN:\n")
   if (sobredispersion > 1.2 && ct_result$p_valor < 0.05) {
-    cat("CONCLUSIÓN: Hay evidencia de sobredispersión. Se recomienda Binomial Negativa.\n")
-  } else if (sobredispersion <= 1.2 && mejor_distribucion == "Poisson") {
-    cat("CONCLUSIÓN: No hay evidencia de sobredispersión. Poisson es adecuada.\n")
+    cat("• Sobredispersión significativa detectada → Binomial Negativa recomendada\n")
+  } else if (sobredispersion <= 1.2) {
+    cat("• No hay sobredispersión significativa → Poisson preferible por simplicidad\n")
+  }
+  
+  if (bondad_poisson$p_valor > 0.05) {
+    cat("• Poisson: Buen ajuste (p-valor > 0.05)\n")
   } else {
-    cat("CONCLUSIÓN: Resultados mixtos. Considerar ambas distribuciones.\n")
+    cat("• Poisson: Ajuste cuestionable (p-valor < 0.05)\n")
+  }
+  
+  if (bondad_nbinom$p_valor > 0.05) {
+    cat("• Binomial Negativa: Buen ajuste (p-valor > 0.05)\n")
+  } else {
+    cat("• Binomial Negativa: Ajuste cuestionable (p-valor < 0.05)\n")
+  }
+  
+  if (distribucion_recomendada_final == "Poisson") {
+    cat("CONCLUSIÓN: Poisson es la distribución recomendada.\n")
+  } else {
+    cat("CONCLUSIÓN: Binomial Negativa es la distribución recomendada.\n")
   }
   
   cat("═══════════════════════════════════════════════════════════════════════════\n")
@@ -152,8 +222,11 @@ Estimadores_frecuencia <- function(datos) {
       cameron_trivedi = ct_result,
       indice_dispersion = sobredispersion
     ),
-    mejor_distribucion = mejor_distribucion,
-    mejores_parametros = mejores_parametros
+    mejor_distribucion_aic = mejor_distribucion_aic,
+    mejores_parametros_aic = mejores_parametros,
+    distribucion_recomendada = distribucion_recomendada_final,
+    parametros_recomendados = parametros_recomendados,
+    parametros_recomendados_texto = parametros_recomendados_texto
   )
   
   invisible(resultados)

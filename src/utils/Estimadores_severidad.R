@@ -32,12 +32,32 @@ Estimadores_severidad <- function(datos) {
   
   ajustar_gamma <- function(datos) {
     tryCatch({
-      ajuste <- suppressWarnings(fitdistr(datos, "gamma"))
+      # Escalar datos para mejorar convergencia
+      factor_escala <- median(datos)
+      datos_escalados <- datos / factor_escala
+      
+      # Ajustar con valores iniciales mejorados
+      media_esc <- mean(datos_escalados)
+      var_esc <- var(datos_escalados)
+      shape_inicial <- media_esc^2 / var_esc
+      rate_inicial <- media_esc / var_esc
+      
+      ajuste <- suppressWarnings(fitdistr(datos_escalados, "gamma", 
+                                         start = list(shape = shape_inicial, rate = rate_inicial),
+                                         lower = c(0.001, 0.001)))
+      
+      # Reescalar parámetros
+      shape_final <- ajuste$estimate[1]
+      rate_final <- ajuste$estimate[2] / factor_escala
+      
+      # Calcular log-likelihood con datos originales
+      loglik_original <- sum(dgamma(datos, shape = shape_final, rate = rate_final, log = TRUE))
+      
       return(list(
-        parametros = list(shape = ajuste$estimate[1], rate = ajuste$estimate[2]),
-        aic = 2 * length(ajuste$estimate) - 2 * ajuste$loglik,
-        loglik = ajuste$loglik,
-        bic = log(length(datos)) * length(ajuste$estimate) - 2 * ajuste$loglik
+        parametros = list(shape = shape_final, rate = rate_final),
+        aic = 2 * length(ajuste$estimate) - 2 * loglik_original,
+        loglik = loglik_original,
+        bic = log(length(datos)) * length(ajuste$estimate) - 2 * loglik_original
       ))
     }, error = function(e) {
       return(list(
@@ -116,6 +136,83 @@ Estimadores_severidad <- function(datos) {
     })
   }
   
+  
+  ajustar_inv_gaussian <- function(datos) {
+    tryCatch({
+      if (requireNamespace("statmod", quietly = TRUE)) {
+        # Usar método de momentos para valores iniciales
+        media <- mean(datos)
+        var_datos <- var(datos)
+        lambda_inicial <- media^3 / var_datos
+        mu_inicial <- media
+        
+        # Función de densidad y log-likelihood para inverse gaussian
+        dinvgaus <- function(x, mu, lambda) {
+          sqrt(lambda / (2 * pi * x^3)) * exp(-lambda * (x - mu)^2 / (2 * mu^2 * x))
+        }
+        
+        ajuste <- suppressWarnings(fitdistr(datos, dinvgaus, start = list(mu = mu_inicial, lambda = lambda_inicial), 
+                                          lower = c(0.001, 0.001)))
+        
+        return(list(
+          parametros = list(mu = ajuste$estimate[1], lambda = ajuste$estimate[2]),
+          aic = 2 * length(ajuste$estimate) - 2 * ajuste$loglik,
+          loglik = ajuste$loglik,
+          bic = log(length(datos)) * length(ajuste$estimate) - 2 * ajuste$loglik
+        ))
+      } else {
+        return(list(
+          parametros = list(mu = NA, lambda = NA),
+          aic = Inf,
+          loglik = -Inf,
+          bic = Inf
+        ))
+      }
+    }, error = function(e) {
+      return(list(
+        parametros = list(mu = NA, lambda = NA),
+        aic = Inf,
+        loglik = -Inf,
+        bic = Inf
+      ))
+    })
+  }
+  
+  ajustar_burr <- function(datos) {
+    tryCatch({
+      if (requireNamespace("actuar", quietly = TRUE)) {
+        # Valores iniciales basados en características de los datos
+        media <- mean(datos)
+        inicio <- list(shape1 = 1, shape2 = 2, scale = media)
+        
+        ajuste <- suppressWarnings(fitdistr(datos, dburr, start = inicio, 
+                                          shape1 = "shape1", shape2 = "shape2", scale = "scale",
+                                          lower = c(0.001, 0.001, 0.001)))
+        
+        return(list(
+          parametros = list(shape1 = ajuste$estimate[1], shape2 = ajuste$estimate[2], scale = ajuste$estimate[3]),
+          aic = 2 * length(ajuste$estimate) - 2 * ajuste$loglik,
+          loglik = ajuste$loglik,
+          bic = log(length(datos)) * length(ajuste$estimate) - 2 * ajuste$loglik
+        ))
+      } else {
+        return(list(
+          parametros = list(shape1 = NA, shape2 = NA, scale = NA),
+          aic = Inf,
+          loglik = -Inf,
+          bic = Inf
+        ))
+      }
+    }, error = function(e) {
+      return(list(
+        parametros = list(shape1 = NA, shape2 = NA, scale = NA),
+        aic = Inf,
+        loglik = -Inf,
+        bic = Inf
+      ))
+    })
+  }
+  
   test_ks <- function(datos, distribucion, parametros) {
     tryCatch({
       if (distribucion == "normal") {
@@ -126,9 +223,24 @@ Estimadores_severidad <- function(datos) {
         test_result <- suppressWarnings(ks.test(datos, "pweibull", parametros$shape, parametros$scale))
       } else if (distribucion == "lognormal") {
         test_result <- suppressWarnings(ks.test(datos, "plnorm", parametros$meanlog, parametros$sdlog))
+      } else if (distribucion == "inv_gaussian") {
+        if (requireNamespace("statmod", quietly = TRUE)) {
+          pinvgaus <- function(x, mu, lambda) {
+            pnorm(sqrt(lambda/x) * (x/mu - 1)) + exp(2*lambda/mu) * pnorm(-sqrt(lambda/x) * (x/mu + 1))
+          }
+          test_result <- suppressWarnings(ks.test(datos, pinvgaus, parametros$mu, parametros$lambda))
+        } else {
+          return(list(estadistico = NA, p_valor = NA, decision = "No evaluable"))
+        }
       } else if (distribucion == "pareto") {
         if (requireNamespace("actuar", quietly = TRUE)) {
           test_result <- suppressWarnings(ks.test(datos, ppareto, parametros$shape, parametros$scale))
+        } else {
+          return(list(estadistico = NA, p_valor = NA, decision = "No evaluable"))
+        }
+      } else if (distribucion == "burr") {
+        if (requireNamespace("actuar", quietly = TRUE)) {
+          test_result <- suppressWarnings(ks.test(datos, pburr, parametros$shape1, parametros$shape2, parametros$scale))
         } else {
           return(list(estadistico = NA, p_valor = NA, decision = "No evaluable"))
         }
@@ -179,14 +291,18 @@ Estimadores_severidad <- function(datos) {
   ajuste_gamma <- ajustar_gamma(datos)
   ajuste_weibull <- ajustar_weibull(datos)
   ajuste_lognormal <- ajustar_lognormal(datos)
+  ajuste_inv_gaussian <- ajustar_inv_gaussian(datos)
   ajuste_pareto <- ajustar_pareto(datos)
+  ajuste_burr <- ajustar_burr(datos)
   
   ajustes <- list(
     normal = ajuste_normal,
     gamma = ajuste_gamma,
     weibull = ajuste_weibull,
     lognormal = ajuste_lognormal,
-    pareto = ajuste_pareto
+    inv_gaussian = ajuste_inv_gaussian,
+    pareto = ajuste_pareto,
+    burr = ajuste_burr
   )
   
   aics <- sapply(ajustes, function(x) x$aic)
@@ -199,7 +315,9 @@ Estimadores_severidad <- function(datos) {
   ks_gamma <- test_ks(datos, "gamma", ajuste_gamma$parametros)
   ks_weibull <- test_ks(datos, "weibull", ajuste_weibull$parametros)
   ks_lognormal <- test_ks(datos, "lognormal", ajuste_lognormal$parametros)
+  ks_inv_gaussian <- test_ks(datos, "inv_gaussian", ajuste_inv_gaussian$parametros)
   ks_pareto <- test_ks(datos, "pareto", ajuste_pareto$parametros)
+  ks_burr <- test_ks(datos, "burr", ajuste_burr$parametros)
   
   ad_normal <- test_anderson_darling(datos, "normal", ajuste_normal$parametros)
   
@@ -222,8 +340,12 @@ Estimadores_severidad <- function(datos) {
       sprintf("k=%.4f, λ=%.2f", params$shape, params$scale)
     } else if (dist_name == "lognormal") {
       sprintf("μ=%.4f, σ=%.4f", params$meanlog, params$sdlog)
+    } else if (dist_name == "inv_gaussian") {
+      sprintf("μ=%.2f, λ=%.4f", params$mu, params$lambda)
     } else if (dist_name == "pareto") {
       sprintf("α=%.4f, θ=%.2f", params$shape, params$scale)
+    } else if (dist_name == "burr") {
+      sprintf("α=%.4f, γ=%.4f, θ=%.2f", params$shape1, params$shape2, params$scale)
     }
   }
   
@@ -244,7 +366,9 @@ Estimadores_severidad <- function(datos) {
     gamma = ks_gamma,
     weibull = ks_weibull,
     lognormal = ks_lognormal,
-    pareto = ks_pareto
+    inv_gaussian = ks_inv_gaussian,
+    pareto = ks_pareto,
+    burr = ks_burr
   )
   
   for (dist_name in names(ks_tests)) {
