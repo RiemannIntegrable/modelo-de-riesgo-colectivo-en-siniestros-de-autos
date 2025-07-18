@@ -178,12 +178,25 @@ tasks.txt
 # Excluir toda la carpeta de datos
 /data/*
 
-# Pero permitir la carpeta input y archivos específicos que deben ser trackeados
+# Pero permitir las carpetas y archivos específicos que deben ser trackeados
 !/data/input/
 !/data/input/Grupo_P11.xlsx
 !/data/input/Siniestros_Hist.xlsx
 !/data/input/polizas_v2.txt
 !/data/input/factores_ipc.csv
+
+# Permitir las carpetas processed/ y output/ para mantener estructura
+!/data/processed/
+!/data/processed/.gitkeep
+!/data/output/
+!/data/output/.gitkeep
+
+# Pero excluir todo su contenido (excepto .gitkeep)
+/data/processed/*
+/data/output/*
+# Permitir los .gitkeep
+!/data/processed/.gitkeep
+!/data/output/.gitkeep
 
 # En docs/ solo trackear main.tex y las carpetas content/ y config/
 docs/*
