@@ -52,13 +52,9 @@ renv/staging/
 /models/*.RData
 /models/*.pkl
 
-# Imágenes generadas (opcional - descomenta si no quieres versionarlas)
-/images/*.jpg
-/images/*.pdf
-/images/*.svg
-# Pero siempre mantener
-!/images/.gitkeep
-# Permitir el escudo de la Universidad (no generado por notebooks)
+# Excluir todas las imágenes generadas
+/images/*
+# Pero permitir el escudo de la Universidad (no generado por notebooks)
 !/images/Escudo_de_la_Universidad_Nacional_de_Colombia_*.png
 
 # Generados por LaTeX/XeTeX/LuaTeX
@@ -179,14 +175,15 @@ tasks.txt
 *.nb.html
 *_files/
 
-# Excluir carpeta de datos del nivel raíz (no src/data/)
-/data/
+# Excluir toda la carpeta de datos
+/data/*
 
-# Pero permitir archivos específicos de input que deben ser trackeados
-!data/input/Grupo_P11.xlsx
-!data/input/Siniestros_Hist.xlsx
-!data/input/polizas_v2.txt
-!data/input/factores_ipc.csv
+# Pero permitir la carpeta input y archivos específicos que deben ser trackeados
+!/data/input/
+!/data/input/Grupo_P11.xlsx
+!/data/input/Siniestros_Hist.xlsx
+!/data/input/polizas_v2.txt
+!/data/input/factores_ipc.csv
 
 # En docs/ solo trackear main.tex y las carpetas content/ y config/
 docs/*
@@ -194,7 +191,7 @@ docs/*
 !docs/content/
 !docs/config/
 
-# Archivos grandes de datos comunes (redundante con data/ pero útil para otros lugares)
+# Archivos grandes de datos comunes (excepto los específicos de input)
 *.xls
 *.xlsx
 *.sav
@@ -206,6 +203,10 @@ docs/*
 *.hdf5
 *.sqlite
 *.db
+
+# Permitir los archivos específicos de input que ya están listados arriba
+!data/input/Grupo_P11.xlsx
+!data/input/Siniestros_Hist.xlsx
 
 # Pero permitir archivos de ejemplo pequeños si es necesario
 !examples/*.csv
