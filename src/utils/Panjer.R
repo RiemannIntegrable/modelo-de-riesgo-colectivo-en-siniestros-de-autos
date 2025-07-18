@@ -1,4 +1,4 @@
-Panjer <- function(prob_severidad, dist_frecuencia, parametros_frecuencia, x_scale = 1, convolve = 0, maxit = 500, echo = FALSE) {
+Panjer <- function(prob_severidad, dist_frecuencia, parametros_frecuencia, x_scale = 1, convolve = 0, maxit = 50000, echo = FALSE) {
   
   library(actuar)
   
@@ -32,6 +32,7 @@ Panjer <- function(prob_severidad, dist_frecuencia, parametros_frecuencia, x_sca
     x.scale = x_scale,
     convolve = convolve,
     maxit = maxit,
+    tol = 1e-12,  # Tolerancia muy pequeña para forzar más iteraciones
     echo = echo
   )
   
@@ -97,9 +98,9 @@ Panjer <- function(prob_severidad, dist_frecuencia, parametros_frecuencia, x_sca
   # Crear función para obtener probabilidades discretas
   obtener_probabilidades <- function(x_max = NULL, paso = 1) {
     if (is.null(x_max)) {
-      # Estimar x_max basado en percentiles
+      # Estimar x_max basado en percentiles, pero con límite más alto
       x_max <- 0
-      while (cdf_function(x_max) < 0.999 && x_max < 1000000) {
+      while (cdf_function(x_max) < 0.999 && x_max < 600000000) {  # Aumentado a 600M para asegurar llegar a 500M
         x_max <- x_max + paso * 100
       }
     }
@@ -109,6 +110,32 @@ Panjer <- function(prob_severidad, dist_frecuencia, parametros_frecuencia, x_sca
     
     # Calcular PMF a partir de CDF
     pmf_vals <- c(cdf_vals[1], diff(cdf_vals))
+    
+    # Detectar y corregir el problema de "masa restante"
+    # Buscar el primer punto donde CDF = 1 y PMF > 0.1 (masa anormal)
+    problema_idx <- which(cdf_vals >= 0.99999 & pmf_vals > 0.1)
+    
+    if (length(problema_idx) > 0) {
+      # Encontrar el primer punto problemático
+      idx_problema <- problema_idx[1]
+      masa_restante <- pmf_vals[idx_problema]
+      
+      if (masa_restante > 0.1) {  # Si hay masa significativa concentrada
+        # Distribuir la masa restante uniformemente en los puntos restantes
+        n_puntos_restantes <- length(x_vals) - idx_problema + 1
+        pmf_distribuida <- masa_restante / n_puntos_restantes
+        
+        # Redistribuir la masa
+        pmf_vals[idx_problema:length(pmf_vals)] <- pmf_distribuida
+        
+        # Recalcular CDF
+        cdf_vals <- cumsum(pmf_vals)
+        
+        # Advertir al usuario
+        warning(sprintf("Masa de probabilidad (%.3f) redistribuida uniformemente desde x = %d", 
+                       masa_restante, x_vals[idx_problema]))
+      }
+    }
     
     return(data.frame(
       x = x_vals,
