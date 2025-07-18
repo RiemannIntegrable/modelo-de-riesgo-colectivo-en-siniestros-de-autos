@@ -58,6 +58,8 @@ renv/staging/
 /images/*.svg
 # Pero siempre mantener
 !/images/.gitkeep
+# Permitir el escudo de la Universidad (no generado por notebooks)
+!/images/Escudo_de_la_Universidad_Nacional_de_Colombia_*.png
 
 # Generados por LaTeX/XeTeX/LuaTeX
 *.aux

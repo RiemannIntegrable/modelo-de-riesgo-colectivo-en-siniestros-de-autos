@@ -34,63 +34,23 @@
 
 ```
 📦 modelo-de-riesgo-colectivo-en-siniestros-de-autos/
-├── 📁 data/
-│   ├── 📁 input/                    # 📊 Datos originales
-│   │   ├── Grupo_P11.xlsx           # Datos de pólizas históricas
-│   │   ├── Siniestros_Hist.xlsx     # Histórico de siniestros
-│   │   ├── Historico_IPC_Factor_Ajuste.xlsx # Factores de ajuste IPC
-│   │   ├── factores_ipc.csv         # Factores IPC en formato CSV
-│   │   ├── IPC_Update.csv           # Actualización datos IPC
-│   │   ├── polizas.csv              # Pólizas procesadas
-│   │   └── polizas_v2.txt           # Pólizas formato texto
-│   ├── 📁 processed/                # ✅ Datos procesados por cobertura
-│   │   ├── polizas_ppd.csv          # Pólizas Pérdida Parcial Daños
-│   │   ├── polizas_pth.csv          # Pólizas Pérdida Total Hurto
-│   │   ├── polizas_pph.csv          # Pólizas Pérdida Parcial Hurto
-│   │   ├── polizas_rc.csv           # Pólizas Responsabilidad Civil
-│   │   ├── siniestros_ppd.csv       # Siniestros PPD
-│   │   ├── siniestros_pth.csv       # Siniestros PTH
-│   │   ├── siniestros_pph.csv       # Siniestros PPH
-│   │   └── siniestros_rc.csv        # Siniestros RC
-│   └── 📁 output/                   # 📈 Resultados del análisis
-│       ├── perdidas_agregadas_*.csv # Distribuciones de pérdida agregada
-│       ├── distribucion_severidad_*.csv # Distribuciones de severidad
-│       ├── validacion_*.csv         # Datos de validación FFT vs Panjer
-│       └── perdidas_agregadas_total.csv # Distribución total del portafolio
-├── 📁 src/
-│   ├── 📁 data/                     # 🔧 Funciones de procesamiento
-│   │   ├── polizas_diarias.R        # Cálculo de exposición diaria
-│   │   └── ajuste_prima_ipc.R       # Ajuste por inflación IPC
-│   ├── 📁 models/                   # 📊 Modelos estadísticos
-│   ├── 📁 utils/                    # ⚙️ Algoritmos y utilidades
-│   │   ├── Panjer.R                 # Algoritmo de Panjer
-│   │   └── FFT_RiesgoColectivo.R    # Algoritmo FFT para riesgo colectivo
-│   └── 📁 test/                     # 🧪 Tests unitarios
-│       ├── test_polizas_diarias.R   # Tests para cálculos diarios
-│       └── test_ajuste_prima_ipc.R  # Tests para ajuste IPC
+├── 📁 data/                         # 📊 Datos del proyecto
+│   ├── 📁 input/                    # Datos originales (trackeados en Git)
+│   ├── 📁 processed/                # Datos procesados (generados)
+│   └── 📁 output/                   # Resultados del análisis (generados)
+├── 📁 src/                          # 🔧 Código fuente
+│   ├── 📁 data/                     # Funciones de procesamiento
+│   ├── 📁 utils/                    # Algoritmos y utilidades
+│   └── 📁 test/                     # Tests unitarios
 ├── 📁 notebooks/                    # 📓 Análisis en Jupyter
-│   ├── limpieza_de_polizas.ipynb    # Limpieza de datos de pólizas
-│   ├── limpieza_de_siniestros.ipynb # Limpieza de datos de siniestros
-│   ├── limpieza_de_vigentes.ipynb   # Procesamiento de pólizas vigentes
-│   ├── modelo_de_frecuencia.ipynb   # Modelado de frecuencia de siniestros
-│   ├── modelo_de_severidad.ipynb    # Modelado de severidad de siniestros
-│   ├── panjer.ipynb                 # Implementación algoritmo Panjer
-│   └── convolucion_final.ipynb      # Convolución final del portafolio
 ├── 📁 docs/                         # 📄 Documentación técnica
 │   ├── 📁 config/                   # Configuración LaTeX
-│   ├── 📁 content/                  # Secciones del documento
-│   │   ├── Introduccion.tex         # Introducción del proyecto
-│   │   ├── Metodologia.tex          # Metodología empleada
-│   │   ├── Implementacion.tex       # Detalles de implementación
-│   │   ├── Resultados.tex           # Resultados y análisis
-│   │   └── Conclusiones.tex         # Conclusiones y recomendaciones
-│   └── main.tex                     # Documento principal LaTeX
+│   └── 📁 content/                  # Secciones del documento
 ├── 📁 images/                       # 📊 Gráficos y visualizaciones
-│   ├── distribucion_severidad_*.png # Distribuciones de severidad
-│   ├── ajuste_lognormal_*.png       # Ajustes de distribución lognormal
-│   └── validacion_*.png             # Gráficos de validación
-├── environment.yml                  # 🐍 Configuración entorno Conda
-└── README.md                        # 📖 Este archivo
+├── 📄 CLAUDE.md                     # Instrucciones para Claude Code
+├── 📄 LICENCE                       # Licencia MIT
+├── 📄 environment.yml               # 🐍 Configuración entorno Conda
+└── 📄 README.md                     # 📖 Este archivo
 ```
 
 ---
@@ -101,8 +61,9 @@
 
 - 🐧 **Sistema Operativo**: Linux (Ubuntu, WSL, etc.)
 - 🐍 **Conda/Miniconda**: Para gestión de entornos
-- 📝 **Editor de Código**: VSCode, Cursor, o similar con soporte para Jupyter
+- 📝 **Editor de Código**: VSCode o Cursor configurado para compilar con XeLaTeX
 - 📊 **R**: >= 4.2.3 (se instala automáticamente con el entorno)
+- 📄 **TeXLive Full**: Distribución completa de LaTeX para compilación de documentos
 
 ### ⚡ **Setup Rápido**
 
@@ -118,6 +79,7 @@ conda activate Renv
 # 3. Verificar instalación
 R --version
 jupyter --version
+xelatex --version
 
 # 4. Iniciar Jupyter Lab
 jupyter lab
@@ -191,3 +153,26 @@ El archivo `environment.yml` incluye:
 - **Paquetes actuariales**: actuar (para algoritmo Panjer)
 - **Jupyter**: Para notebooks interactivos
 - **Testing**: testthat para pruebas unitarias
+
+### 📄 **Configuración de LaTeX**
+
+**Instalación de TeXLive Full**:
+```bash
+# Ubuntu/Debian
+sudo apt-get install texlive-full
+
+# Verificar XeLaTeX
+xelatex --version
+```
+
+**Configuración del Editor**:
+- **VSCode**: Instalar extensión "LaTeX Workshop" y configurar para usar XeLaTeX
+- **Cursor**: Configurar compilador LaTeX para usar XeLaTeX por defecto
+- **Compilación**: Los documentos requieren XeLaTeX (no pdfLaTeX)
+
+**Compilar documentación**:
+```bash
+cd docs/
+xelatex main.tex
+xelatex main.tex  # Ejecutar dos veces para referencias cruzadas
+```
