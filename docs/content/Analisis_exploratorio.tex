@@ -1,1 +1,76 @@
 \section{Análisis exploratorio}
+
+Este análisis exploratorio examina tres conjuntos de datos fundamentales para el desarrollo del modelo de riesgo colectivo: el portafolio histórico de pólizas, los siniestros históricos y el nuevo portafolio vigente. 
+
+\subsection{Portafolio histórico de pólizas}
+
+El portafolio histórico comprende 3,853 pólizas vigentes entre 2016 y 2020, con un valor promedio de prima suscrita de \$987,171 y un valor asegurado promedio de \$45.1 millones. La distribución temporal muestra concentración en los años 2017-2019, con una mediana de inicio de vigencia en diciembre de 2017 y finalización en diciembre de 2018.
+
+\begin{table}[H]
+\centering
+\caption{Características del portafolio histórico}
+\begin{tabular}{lcc}
+\hline
+\textbf{Variable} & \textbf{Media} & \textbf{Mediana} \\
+\hline
+Prima suscrita & \$987,171 & \$713,862 \\
+Valor asegurado & \$45,100,000 & \$35,900,000 \\
+Valor asegurado RC & \$1,850,000,000 & \$2,000,000,000 \\
+\hline
+\end{tabular}
+\end{table}
+
+Las coberturas muestran alta penetración en el portafolio: PTD (97.8\%), PPD (97.2\%), PH (97.8\%) y PPH (97.2\%), mientras que RC presenta menor participación (65.6\%).
+
+\subsection{Siniestros históricos}
+
+Los siniestros históricos registran 23,363 eventos ocurridos en 2018, con un valor promedio de siniestro incurrido de \$4,090,189 y un monto pagado promedio de \$3,596,041. La distribución temporal se concentra entre marzo y septiembre de 2018, con una mediana de ocurrencia en junio.
+
+Un hallazgo crítico del análisis fue la concentración temporal de la siniestralidad histórica exclusivamente en 2018, mientras que el portafolio histórico comprende múltiples años (2016-2020). Esta desalineación temporal limitó el análisis al subconjunto de pólizas con exposición durante 2018.
+
+\begin{table}[H]
+\centering
+\caption{Características de la siniestralidad histórica}
+\begin{tabular}{lcc}
+\hline
+\textbf{Variable} & \textbf{Media} & \textbf{Mediana} \\
+\hline
+Valor incurrido & \$4,090,189 & \$2,277,511 \\
+Valor pagado & \$3,596,041 & \$1,877,471 \\
+Prima pagada & \$2,186,841 & \$1,466,609 \\
+Deducible & \$1,269,842 & \$1,032,000 \\
+\hline
+\end{tabular}
+\end{table}
+
+Las coberturas identificadas en la siniestralidad son: PTH (Pérdida Total Hurtada), PPD (Pérdida Parcial por Daños), RC BIENES (Responsabilidad Civil Bienes), PPH (Pérdida Parcial por Hurto) y RC PERS (Responsabilidad Civil Personas).
+
+\subsection{Nuevo portafolio vigente}
+
+El nuevo portafolio comprende pólizas con inicio de vigencia en enero de 2019, mostrando homogeneidad temporal. Presenta un valor promedio de prima suscrita de \$1,076,763 y un valor asegurado promedio de \$53.5 millones, superiores al portafolio histórico.
+
+\begin{table}[H]
+\centering
+\caption{Comparación entre portafolios}
+\begin{tabular}{lcc}
+\hline
+\textbf{Variable} & \textbf{Histórico} & \textbf{Vigente} \\
+\hline
+Prima suscrita media & \$987,171 & \$1,076,763 \\
+Valor asegurado medio & \$45,100,000 & \$53,531,158 \\
+Penetración RC & 65.6\% & 76.3\% \\
+\hline
+\end{tabular}
+\end{table}
+
+La cobertura de RC muestra un incremento notable en penetración (76.3\% vs 65.6\%), mientras que las demás coberturas mantienen niveles similares de participación.
+
+\subsection{Limitaciones identificadas}
+
+Durante el análisis exploratorio se identificaron limitaciones significativas en la estructura de datos que afectaron la metodología del proyecto:
+
+\textbf{Ausencia de variable identificadora:} Los conjuntos de datos carecen de una variable identificadora única de pólizas, lo que impidió realizar el enlace directo entre el portafolio histórico y los siniestros. Esta carencia obligó a utilizar la variable fecha como identificador proxy, limitando la capacidad de modelación del nuevo portafolio mediante técnicas de remuestreo.
+
+\textbf{Granularidad temporal:} Se evaluaron diferentes niveles de agregación temporal para optimizar la modelación de frecuencia. La agregación diaria produjo variables de conteo con parámetros extremadamente pequeños, generando inestabilidad en los modelos. La agregación semanal presentó el mismo problema, por lo que se adoptó la agregación mensual como solución de compromiso para obtener parámetros estadísticamente significativos.
+
+Estas limitaciones condicionaron significativamente la metodología adoptada y constituyen la base para las decisiones de modelación posteriores.

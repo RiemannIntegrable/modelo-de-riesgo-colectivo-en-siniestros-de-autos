@@ -1,1 +1,69 @@
 \section{Limpieza de datos}
+
+La limpieza de datos constituye un proceso fundamental para garantizar la calidad y consistencia de la información utilizada en el modelo de riesgo colectivo. Este proceso se estructuró en tres etapas principales correspondientes a los conjuntos de datos disponibles: portafolio histórico, siniestros históricos y portafolio vigente.
+
+\subsection{Limpieza del portafolio histórico}
+
+El portafolio histórico inicial comprendía 1,130,223 registros que requirieron un proceso de depuración sistemático. Se eliminaron 248,928 registros duplicados (22\%) y 263 registros con valores nulos (0.003\%), resultando en 881,032 pólizas únicas. Posteriormente, se aplicó un filtro temporal para seleccionar únicamente las pólizas con exposición durante 2018, alineándose con la disponibilidad de datos de siniestralidad.
+
+\begin{table}[H]
+\centering
+\caption{Filtros aplicados al portafolio histórico}
+\begin{tabular}{lcc}
+\hline
+\textbf{Filtro} & \textbf{Registros eliminados} & \textbf{Registros restantes} \\
+\hline
+Inicial & - & 1,130,223 \\
+Duplicados & 248,928 & 881,295 \\
+Valores nulos & 263 & 881,032 \\
+Prima < \$1,250,000 & 671,187 & 209,845 \\
+Duración < 90 días & 699 & 209,146 \\
+\hline
+\end{tabular}
+\end{table}
+
+Se implementó un umbral de prima mínima de \$1,250,000 basado en tarifas de seguros todo riesgo de 2016, eliminando 671,187 registros que representaban 46.2\% del portafolio pero solo 19.9\% del valor total de primas. Adicionalmente, se eliminaron 699 pólizas con duración inferior a 90 días, consideradas como seguros cancelados por impago tras el período de gracia.
+
+\subsection{Limpieza de la siniestralidad histórica}
+
+Los siniestros históricos contenían 21,428 registros iniciales, reducidos a 21,419 tras eliminar duplicados. Se focalizó el análisis en los eventos de 2018, descartando los 9 registros de enero 2017 por su escasa representatividad. El proceso incluyó la consolidación de las coberturas RC BIENES y RC PERS bajo la categoría unificada RC, alineándose con la estructura del portafolio.
+
+\begin{table}[H]
+\centering
+\caption{Severidades eliminadas por cobertura}
+\begin{tabular}{lcc}
+\hline
+\textbf{Cobertura} & \textbf{Severidad = 0} & \textbf{Porcentaje eliminado} \\
+\hline
+PPH & 343 & 14.3\% \\
+PTH & 278 & 9.1\% \\
+PPD & 2,891 & 16.7\% \\
+RC & 559 & 7.8\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Se aplicó ajuste temporal mediante factores IPC mensuales para actualizar todas las severidades a valores de enero 2019, garantizando homogeneidad monetaria con el portafolio vigente. Los valores de severidad igual a cero fueron eliminados sistemáticamente, representando entre 7.8\% y 16.7\% según la cobertura.
+
+\subsection{Limpieza del portafolio vigente}
+
+El portafolio vigente contenía 300 pólizas iniciales con inicio de vigencia concentrado en enero 2019. Se eliminaron 6 registros duplicados (2\%), resultando en 294 pólizas únicas. El análisis temporal reveló duraciones heterogéneas, con 50\% de pólizas anuales estándar y 13.3\% con duración inferior a 2 días.
+
+\begin{table}[H]
+\centering
+\caption{Promedio de pólizas activas por cobertura}
+\begin{tabular}{lcc}
+\hline
+\textbf{Cobertura} & \textbf{Pólizas promedio} & \textbf{Penetración} \\
+\hline
+PPD & 289 & 98.3\% \\
+PPH & 289 & 98.3\% \\
+PTH & 291 & 99.0\% \\
+RC & 223 & 75.9\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Se implementó un mecanismo de ajuste de duración mínima, estableciendo un año como período estándar para pólizas con duración inferior. Esta decisión se fundamentó en el supuesto de que las duraciones cortas corresponden a pólizas con pago mensual donde la vigencia se extiende progresivamente. No se aplicaron filtros de prima mínima, considerando que los valores bajos pueden corresponder a cuotas iniciales de pólizas con pago fraccionado.
+
+Los datos procesados se organizaron en archivos CSV mensuales por cobertura, facilitando el posterior análisis de frecuencia y severidad requerido para el modelo de riesgo colectivo.

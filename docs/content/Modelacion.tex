@@ -1,1 +1,53 @@
 \section{Modelación}
+
+\subsection{Limitaciones metodológicas}
+
+Las limitaciones identificadas durante el análisis exploratorio condicionaron significativamente el enfoque metodológico del proyecto. La ausencia de variable identificadora única de pólizas impidió implementar la metodología ideal de modelación, la cual habría consistido en generar múltiples muestras aleatorias de 300 pólizas del portafolio histórico completo para entrenar modelos robustos aplicables al nuevo portafolio. En su lugar, se adoptó un enfoque basado en agregación temporal utilizando la fecha como variable proxy.
+
+La decisión de agregación mensual, motivada por la inestabilidad de parámetros en granularidades menores (diaria y semanal), representa una limitación adicional que reduce la precisión del modelo pero permite obtener estimaciones estadísticamente significativas. Esta aproximación constituye una solución de compromiso entre la disponibilidad de datos y la robustez estadística requerida para el modelo de riesgo colectivo.
+
+\subsection{Especificación del modelo}
+
+El modelo de riesgo colectivo se estructuró mediante agregación por tipo de cobertura, seleccionando cuatro coberturas principales: PPD (Pérdida Parcial por Daños), PPH (Pérdida Parcial por Hurto), PTH (Pérdida Total Hurtada) y RC (Responsabilidad Civil). Para cada cobertura $c \in C = \{ppd, pph, pth, rc\}$, se definen las siguientes variables estocásticas:
+
+\begin{itemize}
+\item $N^{(c)}$: Variable de conteo mensual de siniestros por cobertura $c$
+\item $X^{(c)}$: Variable de severidad de un siniestro por cobertura $c$
+\item $\{X^{(c)}_j\}_{j=1}^{N^{(c)}}$: Muestra aleatoria de severidades independientes distribuidas como $X^{(c)}$
+\end{itemize}
+
+La pérdida agregada mensual del portafolio por cobertura se define como:
+$$S^{(c)} = \sum_{j=1}^{N^{(c)}} X_j^{(c)}$$
+
+Y la pérdida agregada mensual total del portafolio como:
+$$S = \sum_{c \in C} S^{(c)}$$
+
+\subsection{Ajuste temporal y homogeneización}
+
+Dado que la siniestralidad histórica se concentra exclusivamente en 2018 mientras que el nuevo portafolio tiene vigencia desde enero de 2019, se implementó un proceso de homogeneización temporal. Se seleccionaron únicamente las pólizas del portafolio histórico con exposición durante 2018, y mediante factores de ajuste del IPC mensual se actualizaron todos los valores monetarios a precios de enero de 2019.
+
+\subsection{Modelación de frecuencia}
+
+Para cada cobertura $c$, se calcularon tres métricas mensuales:
+\begin{itemize}
+\item Número de pólizas vigentes con cobertura $c$
+\item Número de siniestros por cobertura $c$
+\item Razón entre siniestros y pólizas vigentes
+\end{itemize}
+
+Se ajustaron distribuciones Poisson y Binomial Negativa a la frecuencia histórica utilizando funciones base de R, seleccionando la distribución con mejor ajuste. Para la proyección al nuevo portafolio, se calculó $\lambda_c$ como la media de la razón mensual entre siniestros y pólizas vigentes.
+
+La parametrización de las variables de conteo del nuevo portafolio se basó en:
+$$E[N^{(c)}] = \lambda_c \times \text{media de pólizas vigentes del nuevo portafolio}$$
+
+Asumiendo constancia del índice de sobredispersión entre períodos, se determinaron los parámetros completos de $N^{(c)}$.
+
+\subsection{Algoritmos de convolución}
+
+La distribución de las pérdidas agregadas $S^{(c)}$ se calculó mediante dos algoritmos:
+\begin{itemize}
+\item Algoritmo recursivo de Panjer
+\item Transformada Rápida de Fourier (FFT)
+\end{itemize}
+
+Finalmente, se aplicó convolución numérica para obtener la distribución de la pérdida agregada total $S$, combinando las distribuciones individuales de todas las coberturas.
