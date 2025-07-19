@@ -1,17 +1,176 @@
 \section{Preguntas actuariales}
 
-\subsection{Deducible óptimo}
+\subsection{Distribucion de las perdidas mensuales}
 
-¿Cuál es el deducible óptimo para una póliza integral que incluye las coberturas PPD, PPH, PTH y RC?
+\textbf{¿Cuál es la distribucion de probabilidades de las perdidas mensuales para el nuevo portafolio?}
+
+
 
 \subsection{Prima pura stop-loss del portafolio}
 
-¿Cuál es la prima pura stop-loss para el portafolio total considerando la variable de pérdida agregada $S$?
+\textbf{¿Cuál es la prima pura stop-loss para el portafolio total considerando la variable de pérdida agregada $S$?}
+
+Para el cálculo de las primas stop-loss del portafolio, utilizamos la distribución de pérdida agregada $S$ obtenida mediante convolución FFT de las cuatro coberturas. La prima stop-loss pura para un deducible $d$ se define como:
+
+$$\pi_S(d) = \mathbb{E}[\max(S - d, 0)] = \int_d^{\infty} (x - d) f_S(x) dx$$
+
+Dado que trabajamos con una distribución discreta con paso de 10,000 COP, el cálculo se realizó mediante:
+
+$$\pi_S(d) = \sum_{k=\lceil d/10000 \rceil}^{n} (k \cdot 10000 - d) \cdot P(S = k \cdot 10000)$$
+
+\subsubsection{Primas stop-loss para distintas retenciones}
+
+La siguiente tabla presenta las primas stop-loss calculadas para el portafolio total, considerando deducibles desde 0 hasta 250 millones de COP:
+
+\begin{table}[H]
+\centering
+\caption{Primas Stop-Loss del Portafolio para Distintas Retenciones}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Deducible (M)} & \textbf{Prima $\pi_S(d)$ (COP)} & \textbf{Deducible (M)} & \textbf{Prima $\pi_S(d)$ (COP)} \\
+\hline
+0 & 12,714,886 & 30 & 714,675 \\
+5 & 8,255,142 & 50 & 199,531 \\
+10 & 4,978,220 & 100 & 11,489 \\
+15 & 2,911,378 & 150 & 664 \\
+20 & 1,728,178 & 200 & 38 \\
+25 & 1,077,709 & 250 & 2 \\
+\hline
+\end{tabular}
+\end{table}
+
+Se observa una disminución exponencial en las primas conforme aumenta el deducible, lo cual es consistente con la teoría actuarial. Para deducibles superiores a 100 millones, las primas se vuelven prácticamente despreciables.
+
+\subsubsection{Análisis de solvencia}
+
+Para evaluar la solvencia de la aseguradora bajo diferentes estrategias de reaseguro stop-loss, definimos la probabilidad de solvencia como:
+
+$$P_{\text{solvencia}} = F_S(\text{recaudo} - (1+\theta)\pi_S(d))$$
+
+donde:
+\begin{itemize}
+\item \textbf{Recaudo}: Ingresos totales por primas = 319,732,758 COP
+\item \textbf{$\theta$}: Sobrecargo del reasegurador (5\%, 10\%, 20\%)
+\item \textbf{$\pi_S(d)$}: Prima stop-loss pura para deducible $d$
+\item \textbf{$F_S$}: Función de distribución acumulada de la pérdida agregada
+\end{itemize}
+
+Esta probabilidad representa la probabilidad de que las pérdidas totales sean menores o iguales al capital disponible después de pagar el reaseguro.
+
+\begin{table}[H]
+\centering
+\caption{Probabilidades de Solvencia $F_S(\text{recaudo} - (1+\theta)\pi_S(d))$}
+\scriptsize
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{$\theta$} & \textbf{d=0M} & \textbf{d=10M} & \textbf{d=20M} & \textbf{d=30M} & \textbf{d=50M} & \textbf{d=100M} & \textbf{d=200M} & \textbf{d=250M} \\
+\hline
+5\% & 0.999999995 & 0.999999997 & 0.999999997 & 0.999999998 & 0.999999998 & 0.999999998 & 0.999999998 & 0.999999998 \\
+10\% & 0.999999995 & 0.999999997 & 0.999999997 & 0.999999998 & 0.999999998 & 0.999999998 & 0.999999998 & 0.999999998 \\
+20\% & 0.999999994 & 0.999999997 & 0.999999997 & 0.999999998 & 0.999999997 & 0.999999998 & 0.999999998 & 0.999999998 \\
+\hline
+\end{tabular}
+\end{table}
+
+Los resultados muestran probabilidades de solvencia superiores al 99.8\% en todos los escenarios analizados, indicando una posición financiera robusta del portafolio. La variación en las probabilidades es mínima entre diferentes niveles de retención, sugiriendo que la decisión de reaseguro debería basarse en criterios adicionales como optimización de capital y gestión de volatilidad.
+
+
 
 \subsection{Prima stop-loss individual}
 
-¿Cuál es la prima stop-loss para un seguro individual con las cuatro coberturas?
+\textbf{¿Cuál es la prima stop-loss para un seguro individual con las cuatro coberturas?}
+
+Para el cálculo de las primas stop-loss individuales, utilizamos la distribución de severidad individual obtenida del análisis histórico de siniestros. Tras la limpieza de outliers mediante métodos combinados (percentiles y Z-score robusto), se ajustó una distribución Gamma a 17,657 observaciones de severidad.
+
+Los parámetros estimados de la distribución Gamma son:
+\begin{itemize}
+\item \textbf{Forma ($\alpha$)}: 1.874
+\item \textbf{Tasa ($\beta$)}: 6.152 × 10\textsuperscript{-7}
+\item \textbf{Media}: 3,046,729 COP
+\end{itemize}
+
+La prima stop-loss individual para un deducible $d$ se calcula como:
+
+$$\pi_X(d) = \mathbb{E}[\max(X - d, 0)] = \int_d^{\infty} (x - d) f_X(x) dx$$
+
+Utilizando las propiedades de la distribución Gamma, esta integral se evalúa analíticamente.
+
+\subsubsection{Primas stop-loss para distintos deducibles}
+
+La siguiente tabla presenta las primas stop-loss calculadas para seguros individuales, considerando deducibles desde 50,000 hasta 10,000,000 COP en múltiplos de 50,000:
+
+\begin{table}[H]
+\centering
+\caption{Primas Stop-Loss Individuales para Distintos Deducibles}
+\scriptsize
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\textbf{Deducible} & \textbf{Prima $\pi_X(d)$} & \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} & \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} \\
+\textbf{(M COP)} & \textbf{(COP)} & \textbf{(M COP)} & \textbf{(COP)} & \textbf{(M COP)} & \textbf{(COP)} \\
+\hline
+0.05 & 2,994,976 & 1.75 & 1,535,810 & 3.45 & 717,511 \\
+0.10 & 2,945,063 & 1.80 & 1,502,685 & 3.50 & 680,479 \\
+0.15 & 2,895,283 & 1.85 & 1,470,122 & 3.55 & 644,752 \\
+0.20 & 2,845,685 & 1.90 & 1,438,122 & 3.60 & 651,315 \\
+0.25 & 2,796,315 & 1.95 & 1,406,685 & 3.65 & 635,665 \\
+0.30 & 2,747,214 & 2.00 & 1,375,809 & 3.70 & 620,362 \\
+0.35 & 2,698,420 & 2.05 & 1,345,491 & 3.75 & 605,399 \\
+0.40 & 2,649,964 & 2.10 & 1,315,729 & 3.80 & 590,769 \\
+0.45 & 2,601,879 & 2.15 & 1,286,517 & 3.85 & 576,466 \\
+0.50 & 2,554,192 & 2.20 & 1,257,852 & 3.90 & 562,485 \\
+0.55 & 2,506,927 & 2.25 & 1,229,727 & 3.95 & 548,819 \\
+0.60 & 2,460,108 & 2.30 & 1,202,138 & 4.00 & 535,461 \\
+0.65 & 2,413,756 & 2.35 & 1,175,079 & 4.05 & 522,406 \\
+0.70 & 2,367,889 & 2.40 & 1,148,543 & 4.10 & 509,647 \\
+0.75 & 2,322,524 & 2.45 & 1,122,525 & 4.15 & 497,180 \\
+0.80 & 2,277,677 & 2.50 & 1,097,018 & 4.20 & 484,997 \\
+0.85 & 2,233,359 & 2.55 & 1,072,016 & 4.25 & 473,094 \\
+0.90 & 2,189,585 & 2.60 & 1,047,511 & 4.30 & 461,464 \\
+0.95 & 2,146,363 & 2.65 & 1,023,498 & 4.35 & 450,103 \\
+1.00 & 2,103,703 & 2.70 & 999,969 & 4.40 & 439,004 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Primas Stop-Loss Individuales (Continuación)}
+\scriptsize
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\textbf{Deducible} & \textbf{Prima $\pi_X(d)$} & \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} & \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} \\
+\textbf{(M COP)} & \textbf{(COP)} & \textbf{(M COP)} & \textbf{(COP)} & \textbf{(M COP)} & \textbf{(COP)} \\
+\hline
+4.45 & 428,162 & 6.15 & 179,387 & 7.85 & 61,031 \\
+4.50 & 417,572 & 6.20 & 174,768 & 7.90 & 58,008 \\
+4.55 & 407,229 & 6.25 & 170,263 & 7.95 & 55,150 \\
+4.60 & 397,127 & 6.30 & 165,870 & 8.00 & 67,319 \\
+4.65 & 387,262 & 6.35 & 161,587 & 8.05 & 65,535 \\
+4.70 & 377,629 & 6.40 & 157,410 & 8.10 & 63,797 \\
+4.75 & 368,221 & 6.45 & 153,338 & 8.15 & 62,104 \\
+4.80 & 359,036 & 6.50 & 149,367 & 8.20 & 60,454 \\
+4.85 & 350,068 & 6.55 & 145,496 & 8.25 & 58,848 \\
+4.90 & 341,312 & 6.60 & 141,722 & 8.30 & 57,283 \\
+4.95 & 332,763 & 6.65 & 138,042 & 8.35 & 55,759 \\
+5.00 & 324,418 & 6.70 & 134,456 & 8.40 & 54,275 \\
+5.50 & 249,216 & 7.20 & 103,209 & 8.90 & 40,295 \\
+6.00 & 193,962 & 7.70 & 80,064 & 9.40 & 31,538 \\
+\multicolumn{2}{|c|}{} & \multicolumn{2}{|c|}{} & 10.00 & 22,709 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Análisis actuarial}
+
+Las primas stop-loss individuales exhiben un patrón de decrecimiento exponencial consistente con la cola pesada de la distribución Gamma ajustada. El ratio prima/deducible disminuye significativamente conforme aumenta el deducible, desde 59.90 para $d = 50K$ hasta 0.0023 para $d = 10M$.
+
+La granularidad de 50,000 COP en los deducibles permite una precisión superior en la estructuración de coberturas. Se observa que para deducibles inferiores a 1 millón, las primas superan significativamente el valor del deducible, mientras que para deducibles superiores a 5 millones, las primas representan menos del 7\% del valor del deducible.
+
+Esta estructura de precios refleja la concentración del riesgo en los niveles bajos de pérdida, siendo especialmente relevante para decisiones de coaseguro y estructura de deducibles en las pólizas individuales. Los resultados sugieren oportunidades significativas de optimización en la transferencia de riesgo, particularmente en el rango de deducibles medios (1-5 millones de COP).
+
+
 
 \subsection{Requerimiento de capital mensual}
 
-¿Cuál es el requerimiento de capital mensual para el nuevo portafolio de seguros?
+\textbf{¿Cuál es el requerimiento de capital mensual para el nuevo portafolio de seguros?}
+
