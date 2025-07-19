@@ -1,1 +1,7 @@
 \section{Conclusiones}
+
+Este trabajo demostró que es posible implementar un modelo de riesgo colectivo efectivo para seguros de automóviles, incluso trabajando con datos históricos limitados. El análisis reveló que las pérdidas mensuales del portafolio siguen una distribución mixta con cuatro tipos de pérdidas: menores (8.06\%), moderadas (40.82\%), altas (45.11\%) y catastróficas (6.01\%). Esta caracterización proporciona una representación más precisa del riesgo real que las distribuciones tradicionales como Gamma o Lognormal.\\
+
+La validación de los métodos computacionales fue exitosa. Los algoritmos de Panjer y FFT mostraron resultados prácticamente idénticos, con diferencias menores a 0.01\% y correlaciones superiores a 99.99\%. Para la frecuencia de siniestros, se seleccionaron distribuciones Binomial Negativa para las coberturas con mayor variabilidad (PPD, PTH, RC) y Poisson para la cobertura más estable (PPH), basándose en el análisis estadístico de los datos históricos.\\
+
+El capital requerido para el portafolio asciende a \$51.6 millones COP mensuales bajo los estándares de Solvencia II, lo que representa 4 veces la pérdida esperada mensual. Este nivel refleja la naturaleza del negocio de seguros de automóviles, donde eventos extremos pueden generar pérdidas significativas. Las primas stop-loss calculadas muestran el comportamiento esperado de disminución exponencial conforme aumenta el deducible, proporcionando una herramienta práctica para diseñar estrategias de reaseguro y gestión de riesgo.

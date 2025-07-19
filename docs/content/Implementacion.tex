@@ -2,15 +2,15 @@
 
 \subsection{Modelación de frecuencia}
 
-La implementación del modelo de frecuencia se fundamentó en la función \texttt{Estimadores\_frecuencia.R}, desarrollada para automatizar la selección entre distribuciones Poisson y Binomial Negativa mediante criterios estadísticos robustos. Esta función implementa un análisis comparativo exhaustivo que incluye estimación por máxima verosimilitud, pruebas de bondad de ajuste y evaluación de sobredispersión.
+La implementación del modelo de frecuencia se fundamentó en la función \texttt{Estimadores\_frecuencia.R}, desarrollada para automatizar la selección entre distribuciones Poisson y Binomial Negativa mediante criterios estadísticos robustos. Esta función implementa un análisis comparativo exhaustivo que incluye estimación por máxima verosimilitud, pruebas de bondad de ajuste y evaluación de sobredispersión.\\
 
-El procedimiento evaluó sistemáticamente ambas distribuciones para cada cobertura, utilizando el Criterio de Información de Akaike (AIC) como métrica principal de selección, complementado con las pruebas de Cameron-Trivedi para detección de sobredispersión y chi-cuadrado para bondad de ajuste. La función incorpora un algoritmo de decisión que prioriza la evidencia estadística de sobredispersión sobre la simplicidad del modelo.
+El procedimiento evaluó sistemáticamente ambas distribuciones para cada cobertura, utilizando el Criterio de Información de Akaike (AIC) como métrica principal de selección, complementado con las pruebas de Cameron-Trivedi para detección de sobredispersión y chi-cuadrado para bondad de ajuste. La función incorpora un algoritmo de decisión que prioriza la evidencia estadística de sobredispersión sobre la simplicidad del modelo.\\
 
 La selección final se basó en el análisis del índice de sobredispersión (varianza/media): PPD mostró sobredispersión significativa (3.52), justificando la selección de Binomial Negativa; PPH presentó equidispersión (1.00), favoreciendo la distribución Poisson; PTH y RC exhibieron sobredispersión moderada (1.84 y 2.30 respectivamente), conduciendo a la adopción de Binomial Negativa para capturar adecuadamente la variabilidad extra-Poisson observada en los datos históricos.
 
 \subsubsection{Validación de independencia entre coberturas}
 
-Previo a la modelación colectiva, se realizó un análisis exhaustivo de independencia entre las variables de frecuencia de las cuatro coberturas mediante la implementación de la función \texttt{test\_independencia.R}. Este procedimiento es fundamental en la teoría de riesgo colectivo, ya que la asunción de independencia entre líneas de negocio permite la aplicación directa de algoritmos de convolución para el cálculo de la distribución agregada total.
+Previo a la modelación colectiva, se realizó un análisis exhaustivo de independencia entre las variables de frecuencia de las cuatro coberturas mediante la implementación de la función \texttt{test\_independencia.R}. Este procedimiento es fundamental en la teoría de riesgo colectivo, ya que la asunción de independencia entre líneas de negocio permite la aplicación directa de algoritmos de convolución para el cálculo de la distribución agregada total.\\
 
 El análisis implementó una batería de pruebas estadísticas no paramétricas apropiadas para variables de conteo discretas. Se ejecutaron las pruebas de correlación de Spearman y Kendall para evaluar dependencia monotónica, el test de Kruskal-Wallis para comparar distribuciones entre coberturas, y el test de Friedman para medidas repetidas temporales. Adicionalmente, se aplicaron pruebas de chi-cuadrado de Pearson para independencia categórica en análisis por pares de coberturas.
 
@@ -33,7 +33,7 @@ Friedman & 1.234 & 0.7456 & Independientes \\
 \end{tabular}
 \end{table}
 
-Los resultados confirman la hipótesis nula de independencia entre coberturas con un nivel de confianza del 95\%. Ninguna de las pruebas estadísticas evidenció dependencia significativa (p-valores $>$ 0.05), validando la aplicabilidad del supuesto fundamental del modelo de riesgo colectivo. Desde una perspectiva actuarial, esta independencia se justifica por la naturaleza diferenciada de los riesgos cubiertos: daños propios (PPD), lesiones a terceros (PPH), daños a terceros (PTH) y responsabilidad civil (RC) representan eventos con causas y frecuencias estructuralmente distintas.
+Los resultados confirman la hipótesis nula de independencia entre coberturas con un nivel de confianza del 95\%. Ninguna de las pruebas estadísticas evidenció dependencia significativa (p-valores $>$ 0.05), validando la aplicabilidad del supuesto fundamental del modelo de riesgo colectivo. Desde una perspectiva actuarial, esta independencia se justifica por la naturaleza diferenciada de los riesgos cubiertos: daños propios (PPD), lesiones a terceros (PPH), daños a terceros (PTH) y responsabilidad civil (RC) representan eventos con causas y frecuencias estructuralmente distintas.\\
 
 La confirmación estadística de independencia permite proceder con confianza a la modelación mediante convolución de distribuciones individuales, garantizando que la distribución agregada total $S = S_{PPD} + S_{PPH} + S_{PTH} + S_{RC}$ puede calcularse como el producto de las funciones características individuales, optimizando tanto la precisión actuarial como la eficiencia computacional del modelo implementado.
 
@@ -57,7 +57,7 @@ La parametrización de las variables de conteo para el nuevo portafolio se reali
 
 \subsection{Modelación de severidad}
 
-La modelación de severidad se implementó mediante las funciones \texttt{Excluir\_outliers.R} y \texttt{Estimadores\_severidad.R}, diseñadas para garantizar la robustez estadística del proceso de ajuste. La primera función implementa un procedimiento de limpieza de datos que combina filtrado por percentiles con detección de outliers mediante Z-score robusto basado en la Desviación Absoluta Mediana (MAD).
+La modelación de severidad se implementó mediante las funciones \texttt{Excluir\_outliers.R} y \texttt{Estimadores\_severidad.R}, diseñadas para garantizar la robustez estadística del proceso de ajuste. La primera función implementa un procedimiento de limpieza de datos que combina filtrado por percentiles con detección de outliers mediante Z-score robusto basado en la Desviación Absoluta Mediana (MAD).\\
 
 El proceso de estimación evaluó sistemáticamente siete distribuciones continuas (Normal, Gamma, Weibull, Lognormal, Gaussiana Inversa, Pareto y Burr) para cada cobertura, utilizando criterios de información múltiples y pruebas de bondad de ajuste. La función \texttt{Discretizar\_severidad.R} convierte las distribuciones continuas seleccionadas en representaciones discretas compatibles con los algoritmos de riesgo colectivo.
 
@@ -80,7 +80,7 @@ La discretización se realizó con paso de \$10,000 hasta \$500,000,000, generan
 
 \subsubsection{Análisis de independencia entre severidades}
 
-Complementariamente al análisis de frecuencias, se ejecutó una evaluación exhaustiva de independencia entre las variables de severidad de las cuatro coberturas utilizando la función \texttt{test\_independencia\_severidad.R}. Este análisis es crítico para validar que las distribuciones de montos de siniestros entre coberturas no presentan dependencia estructural que pudiera sesgar la estimación de la distribución agregada total.
+Complementariamente al análisis de frecuencias, se ejecutó una evaluación exhaustiva de independencia entre las variables de severidad de las cuatro coberturas utilizando la función \texttt{test\_independencia\_severidad.R}. Este análisis es crítico para validar que las distribuciones de montos de siniestros entre coberturas no presentan dependencia estructural que pudiera sesgar la estimación de la distribución agregada total.\\
 
 El protocolo de análisis implementó pruebas estadísticas especializadas para variables continuas positivas, incluyendo correlaciones de Pearson para dependencia lineal, correlaciones de Spearman y Kendall para dependencia monotónica, test de Kolmogorov-Smirnov para comparación de distribuciones completas, y pruebas de Wilcoxon para comparación de medianas. Adicionalmente, se aplicaron tests de Anderson-Darling para normalidad individual, ANOVA para comparación de medias, y Kruskal-Wallis como alternativa no paramétrica.
 
@@ -104,7 +104,7 @@ Kruskal-Wallis & 3.124 & 0.3729 & Distribuciones similares \\
 \end{tabular}
 \end{table}
 
-Los resultados confirman consistentemente la ausencia de dependencia significativa entre las variables de severidad (p-valores $>$ 0.05). Esta independencia se fundamenta actuarialmente en la estructura diferenciada de costos por cobertura: los montos de daños propios están determinados por el valor del vehículo asegurado y la extensión del daño; las indemnizaciones por lesiones personales dependen de la gravedad médica y costos hospitalarios; los daños a terceros están limitados por los valores de mercado de vehículos afectados; y la responsabilidad civil está acotada por los límites contractuales de póliza.
+Los resultados confirman consistentemente la ausencia de dependencia significativa entre las variables de severidad (p-valores $>$ 0.05). Esta independencia se fundamenta actuarialmente en la estructura diferenciada de costos por cobertura: los montos de daños propios están determinados por el valor del vehículo asegurado y la extensión del daño; las indemnizaciones por lesiones personales dependen de la gravedad médica y costos hospitalarios; los daños a terceros están limitados por los valores de mercado de vehículos afectados; y la responsabilidad civil está acotada por los límites contractuales de póliza.\\
 
 La validación de independencia entre severidades, conjuntamente con la independencia de frecuencias, consolida el marco teórico requerido para la aplicación rigurosa del modelo de riesgo colectivo. Esta confirmación estadística garantiza que la distribución conjunta de pérdidas agregadas $S = \sum_{i=1}^{4} S_i$ puede modelarse como la suma de distribuciones independientes, preservando tanto la exactitud matemática como la interpretabilidad actuarial del modelo implementado.
 
@@ -116,7 +116,7 @@ La validación de independencia entre severidades, conjuntamente con la independ
 
 \subsection{Algoritmo recursivo de Panjer}
 
-La implementación del algoritmo de Panjer se desarrolló en la función \texttt{Panjer.R}, diseñada como wrapper de la librería \texttt{actuar} de R para modelos de suma aleatoria. El algoritmo utiliza el método recursivo \texttt{aggregateDist()} con configuración optimizada para manejar distribuciones discretizadas de gran dimensión y garantizar convergencia numérica estable.
+La implementación del algoritmo de Panjer se desarrolló en la función \texttt{Panjer.R}, diseñada como wrapper de la librería \texttt{actuar} de R para modelos de suma aleatoria. El algoritmo utiliza el método recursivo \texttt{aggregateDist()} con configuración optimizada para manejar distribuciones discretizadas de gran dimensión y garantizar convergencia numérica estable.\\
 
 El proceso incluye validación robusta de entrada que verifica la suma unitaria de probabilidades de severidad y implementa corrección automática mediante redistribución de masa en casos de concentración anómala. La función maneja múltiples distribuciones de frecuencia (Poisson, Binomial Negativa, Binomial y Geométrica) con conversión automática de parámetros según la especificación requerida por el algoritmo recursivo.
 
@@ -183,13 +183,13 @@ Los resultados confirman la equivalencia numérica entre ambos métodos, con err
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{../data/output/grafico_validacion_cdf_fft_panjer.png}
+\includegraphics[width=0.65\textwidth]{../data/output/grafico_validacion_cdf_fft_panjer.png}
 \caption{Validación cruzada: comparación de funciones de distribución acumulada FFT vs Panjer}
 \end{figure}
 
 \subsection{Convolución final y distribución agregada total}
 
-La implementación de la convolución final utiliza la función \texttt{convolucion\_fft()} personalizada para combinar las cuatro distribuciones de pérdida agregada individuales en una distribución total del portafolio. El proceso emplea convolución secuencial con padding automático a potencias de 2 para optimizar la performance computacional.
+La implementación de la convolución final utiliza la función \texttt{convolucion\_fft()} personalizada para combinar las cuatro distribuciones de pérdida agregada individuales en una distribución total del portafolio. El proceso emplea convolución secuencial con padding automático a potencias de 2 para optimizar la performance computacional.\\
 
 La metodología implementa escalamiento progresivo del dominio de cálculo: iniciando con 50,001 puntos para PPD, expandiendo a 100,001 tras convolución con PPH, 150,001 con PTH y finalmente 200,001 puntos tras inclusión de RC. Esta estrategia permite manejo eficiente de memoria mientras preserva resolución numérica.
 

@@ -67,10 +67,10 @@ La cobertura de RC muestra un incremento notable en penetración (76.3\% vs 65.6
 
 \subsection{Limitaciones identificadas}
 
-Durante el análisis exploratorio se identificaron limitaciones significativas en la estructura de datos que afectaron la metodología del proyecto:
+Durante el análisis exploratorio se identificaron limitaciones significativas en la estructura de datos que afectaron la metodología del proyecto:\\
 
-\textbf{Ausencia de variable identificadora:} Los conjuntos de datos carecen de una variable identificadora única de pólizas, lo que impidió realizar el enlace directo entre el portafolio histórico y los siniestros. Esta carencia obligó a utilizar la variable fecha como identificador proxy, limitando la capacidad de modelación del nuevo portafolio mediante técnicas de remuestreo.
+\textbf{Ausencia de variable identificadora:} Los conjuntos de datos carecen de una variable identificadora única de pólizas, lo que impidió realizar el enlace directo entre el portafolio histórico y los siniestros. Esta carencia obligó a utilizar la variable fecha como identificador proxy, limitando la capacidad de modelación del nuevo portafolio mediante técnicas de remuestreo.\\
 
-\textbf{Granularidad temporal:} Se evaluaron diferentes niveles de agregación temporal para optimizar la modelación de frecuencia. La agregación diaria produjo variables de conteo con parámetros extremadamente pequeños, generando inestabilidad en los modelos. La agregación semanal presentó el mismo problema, por lo que se adoptó la agregación mensual como solución de compromiso para obtener parámetros estadísticamente significativos.
+\textbf{Granularidad temporal:} Se evaluaron diferentes niveles de agregación temporal para optimizar la modelación de frecuencia. La agregación diaria produjo variables de conteo con parámetros extremadamente pequeños, generando inestabilidad en los modelos. La agregación semanal presentó el mismo problema, por lo que se adoptó la agregación mensual como solución de compromiso para obtener parámetros estadísticamente significativos.\\
 
 Estas limitaciones condicionaron significativamente la metodología adoptada y constituyen la base para las decisiones de modelación posteriores.

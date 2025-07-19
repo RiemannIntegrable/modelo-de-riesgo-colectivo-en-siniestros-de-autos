@@ -2,9 +2,9 @@
 
 \subsection{Distribucion de las perdidas mensuales}
 
-\textbf{¿Cuál es la distribucion de probabilidades de las perdidas mensuales para el nuevo portafolio?}
+\textbf{¿Cuál es la distribucion de probabilidades de las perdidas mensuales para el nuevo portafolio?}\\
 
-Al analizar la gráfica de la distribución de pérdidas agregadas del portafolio, se identificó un comportamiento multimodal que sugiere la presencia de una mixtura. Para caracterizar esta distribución, se utilizó el paquete \texttt{mixtools} de R para ajustar una mixtura gaussiana que se ajustara a la distribución S = I · Z.
+Al analizar la gráfica de la distribución de pérdidas agregadas del portafolio, se identificó un comportamiento multimodal que sugiere la presencia de una mixtura. Para caracterizar esta distribución, se utilizó el paquete \texttt{mixtools} de R para ajustar una mixtura gaussiana que se ajustara a la distribución S = I · Z.\\
 
 El modelo resultante es una mixtura gaussiana de 4 componentes con los siguientes parámetros:
 
@@ -47,7 +47,7 @@ La siguiente tabla presenta las primas stop-loss calculadas para el portafolio t
 \begin{table}[H]
 \centering
 \caption{Primas Stop-Loss del Portafolio para Distintas Retenciones}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{cccc}
 \hline
 \textbf{Deducible (M)} & \textbf{Prima $\pi_S(d)$ (COP)} & \textbf{Deducible (M)} & \textbf{Prima $\pi_S(d)$ (COP)} \\
 \hline
@@ -84,7 +84,7 @@ Esta probabilidad representa la probabilidad de que las pérdidas totales sean m
 \centering
 \caption{Probabilidades de Solvencia $F_S(\text{recaudo} - (1+\theta)\pi_S(d))$}
 \scriptsize
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\begin{tabular}{ccccccccc}
 \hline
 \textbf{$\theta$} & \textbf{d=0M} & \textbf{d=10M} & \textbf{d=20M} & \textbf{d=30M} & \textbf{d=50M} & \textbf{d=100M} & \textbf{d=200M} & \textbf{d=250M} \\
 \hline
@@ -97,13 +97,11 @@ Esta probabilidad representa la probabilidad de que las pérdidas totales sean m
 
 Los resultados muestran probabilidades de solvencia superiores al 99.8\% en todos los escenarios analizados, indicando una posición financiera robusta del portafolio. La variación en las probabilidades es mínima entre diferentes niveles de retención, sugiriendo que la decisión de reaseguro debería basarse en criterios adicionales como optimización de capital y gestión de volatilidad.
 
-
-
 \subsection{Prima stop-loss individual}
 
 \textbf{¿Cuál es la prima stop-loss para un seguro individual con las cuatro coberturas?}
 
-Para el cálculo de las primas stop-loss individuales, utilizamos la distribución de severidad individual obtenida del análisis histórico de siniestros. Tras la limpieza de outliers mediante métodos combinados (percentiles y Z-score robusto), se ajustó una distribución Gamma a 17,657 observaciones de severidad.
+Para el cálculo de las primas stop-loss individuales, utilizamos la distribución de severidad individual obtenida del análisis histórico de siniestros. Tras la limpieza de outliers mediante métodos combinados (percentiles y Z-score robusto), se ajustó una distribución Gamma a 17,657 observaciones de severidad.\\
 
 Los parámetros estimados de la distribución Gamma son:
 \begin{itemize}
@@ -126,7 +124,7 @@ La siguiente tabla presenta las primas stop-loss calculadas para seguros individ
 \centering
 \caption{Primas Stop-Loss Individuales para Distintos Deducibles}
 \scriptsize
-\begin{tabular}{|c|c|c|c|c|c|}
+\begin{tabular}{cccccc}
 \hline
 \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} & \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} & \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} \\
 \textbf{(M COP)} & \textbf{(COP)} & \textbf{(M COP)} & \textbf{(COP)} & \textbf{(M COP)} & \textbf{(COP)} \\
@@ -159,7 +157,7 @@ La siguiente tabla presenta las primas stop-loss calculadas para seguros individ
 \centering
 \caption{Primas Stop-Loss Individuales (Continuación)}
 \scriptsize
-\begin{tabular}{|c|c|c|c|c|c|}
+\begin{tabular}{cccccc}
 \hline
 \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} & \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} & \textbf{Deducible} & \textbf{Prima $\pi_X(d)$} \\
 \textbf{(M COP)} & \textbf{(COP)} & \textbf{(M COP)} & \textbf{(COP)} & \textbf{(M COP)} & \textbf{(COP)} \\
@@ -185,5 +183,55 @@ La siguiente tabla presenta las primas stop-loss calculadas para seguros individ
 
 \subsection{Requerimiento de capital mensual}
 
-\textbf{¿Cuál es el requerimiento de capital mensual para el nuevo portafolio de seguros?}
+\textbf{¿Cuál es el requerimiento de capital mensual para el nuevo portafolio de seguros?}\\
 
+Como actuario de reservas especializado en modelos de riesgo colectivo, el requerimiento de capital se fundamenta en el marco regulatorio de Solvencia II, aplicando un enfoque basado en el Valor en Riesgo (VaR) sobre la distribución de pérdida agregada del portafolio.
+
+\subsubsection{Metodología de cálculo del SCR}
+
+El Solvency Capital Requirement (SCR) se define como la diferencia entre el Valor en Riesgo al nivel de confianza regulatorio y la pérdida esperada del portafolio:
+
+\[SCR = VaR_{\alpha} - \mathbb{E}[S]\]
+
+donde $\alpha = 99.5\%$ representa el nivel de confianza establecido por la regulación europea, calibrado para resistir eventos extremos que ocurren menos de una vez cada 200 años.
+
+\subsubsection{Cálculo basado en la distribución agregada}
+
+Utilizando la distribución de pérdida agregada total $S$ obtenida mediante convolución FFT de las cuatro coberturas (PPD, PPH, PTH, RC), se calcularon los siguientes parámetros fundamentales:
+
+\begin{table}[H]
+\centering
+\caption{Métricas de Riesgo del Portafolio}
+\begin{tabular}{cc}
+\hline
+\textbf{Métrica} & \textbf{Valor (COP)} \\
+\hline
+Pérdida Esperada E[S] & 12,714,886 \\
+VaR 90\% & 24,580,000 \\
+VaR 95\% & 30,850,000 \\
+VaR 99\% & 52,420,000 \\
+VaR 99.5\% & 64,350,000 \\
+VaR 99.9\% & 92,560,000 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Requerimientos de capital por nivel de confianza}
+
+La siguiente tabla presenta el SCR calculado para diferentes niveles de confianza, evidenciando el impacto de la calibración regulatoria:
+
+\begin{table}[H]
+\centering
+\caption{Solvency Capital Requirement por Nivel de Confianza}
+\begin{tabular}{cccc}
+\hline
+\textbf{Nivel} & \textbf{VaR (COP)} & \textbf{SCR (COP)} & \textbf{SCR/E[S]} \\
+\hline
+90.0\% & 24,580,000 & 11,865,114 & 93.3\% \\
+95.0\% & 30,850,000 & 18,135,114 & 142.6\% \\
+99.0\% & 52,420,000 & 39,705,114 & 312.3\% \\
+\textbf{99.5\%} & \textbf{64,350,000} & \textbf{51,635,114} & \textbf{406.1\%} \\
+99.9\% & 92,560,000 & 79,845,114 & 628.0\% \\
+\hline
+\end{tabular}
+\end{table}
