@@ -4,7 +4,29 @@
 
 \textbf{¿Cuál es la distribucion de probabilidades de las perdidas mensuales para el nuevo portafolio?}
 
+Al analizar la gráfica de la distribución de pérdidas agregadas del portafolio, se identificó un comportamiento multimodal que sugiere la presencia de una mixtura. Para caracterizar esta distribución, se utilizó el paquete \texttt{mixtools} de R para ajustar una mixtura gaussiana que se ajustara a la distribución S = I · Z.
 
+El modelo resultante es una mixtura gaussiana de 4 componentes con los siguientes parámetros:
+
+\textbf{Variable I (Indicadora discreta):}
+\begin{itemize}
+\item P(I = 1) = 0.4511, P(I = 2) = 0.0601, P(I = 3) = 0.0806, P(I = 4) = 0.4082
+\end{itemize}
+
+\textbf{Variable Z (Distribución condicional continua):}
+\begin{itemize}
+\item Z|I=1 $\sim$ N(16.4M, 6.6M²) - Pérdidas altas (45.11\%)
+\item Z|I=2 $\sim$ N(37.7M, 18.4M²) - Pérdidas catastróficas (6.01\%)  
+\item Z|I=3 $\sim$ N(1.2M, 1.1M²) - Pérdidas menores (8.06\%)
+\item Z|I=4 $\sim$ N(7.2M, 3.3M²) - Pérdidas moderadas (40.82\%)
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../data/output/grafico_pmf_total_50M.png}
+\caption{Distribución de Pérdida Agregada Total del Portafolio (hasta 50M)}
+\label{fig:pmf_total}
+\end{figure}
 
 \subsection{Prima pura stop-loss del portafolio}
 
@@ -33,6 +55,7 @@ La siguiente tabla presenta las primas stop-loss calculadas para el portafolio t
 5 & 8,255,142 & 50 & 199,531 \\
 10 & 4,978,220 & 100 & 11,489 \\
 15 & 2,911,378 & 150 & 664 \\
+
 20 & 1,728,178 & 200 & 38 \\
 25 & 1,077,709 & 250 & 2 \\
 \hline
@@ -155,20 +178,10 @@ La siguiente tabla presenta las primas stop-loss calculadas para seguros individ
 5.00 & 324,418 & 6.70 & 134,456 & 8.40 & 54,275 \\
 5.50 & 249,216 & 7.20 & 103,209 & 8.90 & 40,295 \\
 6.00 & 193,962 & 7.70 & 80,064 & 9.40 & 31,538 \\
-\multicolumn{2}{|c|}{} & \multicolumn{2}{|c|}{} & 10.00 & 22,709 \\
+\multicolumn{2}{|c|}{} & \multicolumn{2}{c|}{} & 10.00 & 22,709 \\
 \hline
 \end{tabular}
 \end{table}
-
-\subsubsection{Análisis actuarial}
-
-Las primas stop-loss individuales exhiben un patrón de decrecimiento exponencial consistente con la cola pesada de la distribución Gamma ajustada. El ratio prima/deducible disminuye significativamente conforme aumenta el deducible, desde 59.90 para $d = 50K$ hasta 0.0023 para $d = 10M$.
-
-La granularidad de 50,000 COP en los deducibles permite una precisión superior en la estructuración de coberturas. Se observa que para deducibles inferiores a 1 millón, las primas superan significativamente el valor del deducible, mientras que para deducibles superiores a 5 millones, las primas representan menos del 7\% del valor del deducible.
-
-Esta estructura de precios refleja la concentración del riesgo en los niveles bajos de pérdida, siendo especialmente relevante para decisiones de coaseguro y estructura de deducibles en las pólizas individuales. Los resultados sugieren oportunidades significativas de optimización en la transferencia de riesgo, particularmente en el rango de deducibles medios (1-5 millones de COP).
-
-
 
 \subsection{Requerimiento de capital mensual}
 
