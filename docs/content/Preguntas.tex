@@ -4,28 +4,88 @@
 
 \textbf{¿Cuál es la distribucion de probabilidades de las perdidas mensuales para el nuevo portafolio?}\\
 
-Al analizar la gráfica de la distribución de pérdidas agregadas del portafolio, se identificó un comportamiento multimodal que sugiere la presencia de una mixtura. Para caracterizar esta distribución, se utilizó el paquete \texttt{mixtools} de R para ajustar una mixtura gaussiana que se ajustara a la distribución S = I · Z.\\
-
-El modelo resultante es una mixtura gaussiana de 4 componentes con los siguientes parámetros:
-
-\textbf{Variable I (Indicadora discreta):}
-\begin{itemize}
-\item P(I = 1) = 0.4511, P(I = 2) = 0.0601, P(I = 3) = 0.0806, P(I = 4) = 0.4082
-\end{itemize}
-
-\textbf{Variable Z (Distribución condicional continua):}
-\begin{itemize}
-\item Z|I=1 $\sim$ N(16.4M, 6.6M²) - Pérdidas altas (45.11\%)
-\item Z|I=2 $\sim$ N(37.7M, 18.4M²) - Pérdidas catastróficas (6.01\%)  
-\item Z|I=3 $\sim$ N(1.2M, 1.1M²) - Pérdidas menores (8.06\%)
-\item Z|I=4 $\sim$ N(7.2M, 3.3M²) - Pérdidas moderadas (40.82\%)
-\end{itemize}
+Al analizar la distribución de pérdidas agregadas del portafolio obtenida mediante convolución FFT, se observa un comportamiento característico que requiere análisis cuidadoso para su modelación apropiada.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../data/output/grafico_pmf_total_50M.png}
 \caption{Distribución de Pérdida Agregada Total del Portafolio (hasta 50M)}
-\label{fig:pmf_total}
+\end{figure}
+
+La gráfica revela una estructura compleja que sugiere la presencia de una \textbf{distribución defectiva} con características de mixtura. Se observa claramente una masa puntual significativa en cero (aproximadamente 3.13\% de probabilidad de no pérdidas), seguida de una distribución continua con múltiples modas que indica heterogeneidad en los patrones de siniestralidad del portafolio.
+
+\subsubsection{Hipótesis de modelación}
+
+Esta evidencia empírica sugiere que la distribución no puede ser capturada adecuadamente por una sola distribución paramétrica tradicional. El comportamiento observado es consistente con un \textbf{modelo Zero-Modified}, donde existe probabilidad positiva de ausencia total de pérdidas combinada con una distribución continua para las pérdidas positivas.
+
+\textbf{Modelo Zero-Modified Gamma implementado}: El análisis detallado en \texttt{notebooks/pregunta1.ipynb} confirma que la estructura se modela óptimamente como $S = I \times Z$, donde:
+\begin{itemize}
+\item $I \sim \text{Bernoulli}(1-p_0)$ es una variable indicadora de ocurrencia de pérdidas
+\item $Z | I=1 \sim \text{Gamma}(\alpha, \beta)$ es la severidad condicional dado que hay pérdidas
+\item $S = 0$ cuando $I = 0$ (sin pérdidas), y $S \sim \text{Gamma}$ cuando $I = 1$ (con pérdidas)
+\end{itemize}
+
+\subsubsection{Identificación de componentes del modelo}
+
+El análisis cuantitativo de la distribución empírica identificó:
+
+\begin{table}[H]
+\centering
+\caption{Componentes del modelo Zero-Modified Gamma}
+\begin{tabular}{lcc}
+\hline
+\textbf{Componente} & \textbf{Parámetro} & \textbf{Valor Estimado} \\
+\hline
+\multirow{2}{*}{Variable $I$ (Indicadora)} & $P(I = 0)$ & 0.031335 (3.13\%) \\
+& $P(I = 1)$ & 0.968665 (96.87\%) \\
+\hline
+\multirow{3}{*}{Variable $Z$ (Gamma condicional)} & Forma ($\alpha$) & 1.564 \\
+& Tasa ($\beta$) & $1.19 \times 10^{-7}$ \\
+& Media $E[Z|I=1]$ & 13,101,909 COP \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Estimación de parámetros}
+
+Se compararon dos métodos de estimación para la distribución Gamma de la parte positiva:
+
+\begin{table}[H]
+\centering
+\caption{Comparación de métodos de estimación}
+\begin{tabular}{lccc}
+\hline
+\textbf{Método} & \textbf{Log-Verosimilitud} & \textbf{AIC} & \textbf{Selección} \\
+\hline
+Máxima Verosimilitud (MLE) & $-8.96 \times 10^{16}$ & $1.79 \times 10^{17}$ & - \\
+\textbf{Método de Momentos} & \textbf{-865,388} & \textbf{1,730,781} & \textbf{Óptimo} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Resultados del análisis de modelación}
+
+El desarrollo completo en \texttt{notebooks/pregunta1.ipynb} confirma la hipótesis de modelación Zero-Modified Gamma. Las siguientes gráficas ilustran el proceso de análisis y los resultados obtenidos:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.48\textwidth]{../images/distribucion_agregada_completa.png}
+\includegraphics[width=0.48\textwidth]{../images/distribucion_agregada_detalle_50M.png}
+\caption{Análisis exploratorio: distribución completa (izquierda) y detalle de la masa puntual en cero (derecha)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.48\textwidth]{../images/validacion_modelo_zero_modified.png}
+    \includegraphics[width=0.48\textwidth]{../images/residuales_ajuste_zero_modified.png}
+    \caption{Validación del modelo: comparación empírica vs teórica (izquierda) y análisis de residuales (derecha)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.48\textwidth]{../images/ajuste_gamma_zero_modified.png}
+\includegraphics[width=0.48\textwidth]{../images/qq_plot_gamma_ajuste.png}
+\caption{Ajuste Gamma a la parte positiva (izquierda) y validación Q-Q plot (derecha)}
 \end{figure}
 
 \subsection{Prima pura stop-loss del portafolio}

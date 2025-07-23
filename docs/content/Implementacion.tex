@@ -21,21 +21,21 @@ El análisis implementó una batería de pruebas estadísticas no paramétricas 
 \hline
 \textbf{Test estadístico} & \textbf{Estadístico} & \textbf{p-valor} & \textbf{Conclusión} \\
 \hline
-Spearman: PPD vs PPH & 0.0124 & 0.8521 & Independientes \\
-Spearman: PPD vs PTH & -0.0089 & 0.8912 & Independientes \\
-Spearman: PPD vs RC & 0.0234 & 0.7234 & Independientes \\
-Kendall: PPH vs PTH & 0.0156 & 0.8123 & Independientes \\
-Kendall: PPH vs RC & -0.0078 & 0.9012 & Independientes \\
-Kendall: PTH vs RC & 0.0198 & 0.7889 & Independientes \\
-Kruskal-Wallis & 2.456 & 0.4823 & Independientes \\
-Friedman & 1.234 & 0.7456 & Independientes \\
+Spearman: PPD vs PPH & -0.0351 & 0.9138 & Independientes \\
+Spearman: PPD vs PTH & 0.2872 & 0.3654 & Independientes \\
+Spearman: PPD vs RC & -0.1399 & 0.6672 & Independientes \\
+Kendall: PPH vs PTH & -0.2016 & 0.3693 & Independientes \\
+Kendall: PPH vs RC & 0.2154 & 0.3348 & Independientes \\
+Kendall: PTH vs RC & -0.2595 & 0.2426 & Independientes \\
+Kruskal-Wallis & 40.1214 & 0.0000 & Dependientes \\
+Friedman & 32.8000 & 0.0000 & Dependientes \\
 \hline
 \end{tabular}
 \end{table}
 
-Los resultados confirman la hipótesis nula de independencia entre coberturas con un nivel de confianza del 95\%. Ninguna de las pruebas estadísticas evidenció dependencia significativa (p-valores $>$ 0.05), validando la aplicabilidad del supuesto fundamental del modelo de riesgo colectivo. Desde una perspectiva actuarial, esta independencia se justifica por la naturaleza diferenciada de los riesgos cubiertos: daños propios (PPD), lesiones a terceros (PPH), daños a terceros (PTH) y responsabilidad civil (RC) representan eventos con causas y frecuencias estructuralmente distintas.\\
+Los resultados presentan evidencia mixta sobre la independencia entre frecuencias de coberturas. Las pruebas de correlación por pares (Spearman y Kendall) no detectan dependencia significativa (p-valores $>$ 0.05), sugiriendo independencia en relaciones bilaterales. Sin embargo, los tests globales de Kruskal-Wallis y Friedman rechazan la hipótesis nula (p-valor = 0.0000), indicando diferencias sistemáticas en la distribución temporal de frecuencias entre coberturas.\\
 
-La confirmación estadística de independencia permite proceder con confianza a la modelación mediante convolución de distribuciones individuales, garantizando que la distribución agregada total $S = S_{PPD} + S_{PPH} + S_{PTH} + S_{RC}$ puede calcularse como el producto de las funciones características individuales, optimizando tanto la precisión actuarial como la eficiencia computacional del modelo implementado.
+Esta aparente contradicción se interpreta actuarialmente como evidencia de que, aunque las frecuencias por pares no están correlacionadas, existen patrones estacionales o temporales diferenciados entre coberturas que no comprometen la validez del modelo de riesgo colectivo. La independencia en las correlaciones bilaterales es suficiente para justificar la aplicación de algoritmos de convolución, mientras que las diferencias detectadas por los tests globales reflejan características intrínsecas de cada cobertura (temporadas de mayor siniestralidad, comportamientos estacionales) que son apropiadamente capturadas por la modelación diferenciada implementada.
 
 \begin{table}[H]
 \centering
@@ -68,10 +68,10 @@ El proceso de estimación evaluó sistemáticamente siete distribuciones continu
 \hline
 \textbf{Cobertura} & \textbf{Distribución} & \textbf{Parámetros} & \textbf{AIC} \\
 \hline
-PPD & Gamma & $\alpha$=1.846, $\beta$=0.0000 & 455,495.07 \\
-PPH & Gamma & $\alpha$=1.942, $\beta$=0.0000 & 18,226.28 \\
-PTH & Gamma & $\alpha$=0.940, $\beta$=0.0000 & 18,122.63 \\
-RC & Lognormal & $\mu$=14.186, $\sigma$=0.811 & 92,805.29 \\
+PPD & Gamma & $\alpha$=1.8460, $\beta$=5.12 $\times$ 10$^{-7}$ & 455,495.07 \\
+PPH & Gamma & $\alpha$=1.9422, $\beta$=1.03 $\times$ 10$^{-6}$ & 18,226.28 \\
+PTH & Weibull & $k$=0.9573, $\lambda$=15,801,659 & 18,122.27 \\
+RC & Lognormal & $\mu$=14.1863, $\sigma$=0.8105 & 92,805.29 \\
 \hline
 \end{tabular}
 \end{table}
@@ -91,27 +91,27 @@ El protocolo de análisis implementó pruebas estadísticas especializadas para 
 \hline
 \textbf{Test estadístico} & \textbf{Estadístico} & \textbf{p-valor} & \textbf{Conclusión} \\
 \hline
-Pearson: PPD vs PPH & 0.0187 & 0.7456 & Independientes \\
-Pearson: PPD vs PTH & -0.0156 & 0.7892 & Independientes \\
-Pearson: PPD vs RC & 0.0298 & 0.6234 & Independientes \\
-Spearman: PPH vs PTH & 0.0089 & 0.8756 & Independientes \\
-Spearman: PPH vs RC & -0.0134 & 0.8123 & Independientes \\
-Kolmogorov-Smirnov: PTH vs RC & 0.0456 & 0.5234 & Distribuciones similares \\
-Wilcoxon: PPD vs PPH & 1234.5 & 0.6789 & Medianas similares \\
-ANOVA (comparación medias) & 1.789 & 0.5456 & Medias similares \\
-Kruskal-Wallis & 3.124 & 0.3729 & Distribuciones similares \\
+Pearson: PPD vs PPH & -0.0284 & 0.9302 & Independientes \\
+Pearson: PPD vs PTH & 0.1339 & 0.6782 & Independientes \\
+Pearson: PPD vs RC & 0.1333 & 0.6795 & Independientes \\
+Spearman: PPH vs PTH & -0.0699 & 0.8344 & Independientes \\
+Spearman: PPH vs RC & 0.1259 & 0.6997 & Independientes \\
+Kolmogorov-Smirnov: PTH vs RC & 0.4167 & 0.2558 & Distribuciones similares \\
+Wilcoxon: PPD vs PPH & 144.0000 & 0.0000 & Medianas diferentes \\
+ANOVA (comparación medias) & 986.2575 & 0.0000 & Medias diferentes \\
+Kruskal-Wallis & 40.5442 & 0.0000 & Distribuciones diferentes \\
 \hline
 \end{tabular}
 \end{table}
 
-Los resultados confirman consistentemente la ausencia de dependencia significativa entre las variables de severidad (p-valores $>$ 0.05). Esta independencia se fundamenta actuarialmente en la estructura diferenciada de costos por cobertura: los montos de daños propios están determinados por el valor del vehículo asegurado y la extensión del daño; las indemnizaciones por lesiones personales dependen de la gravedad médica y costos hospitalarios; los daños a terceros están limitados por los valores de mercado de vehículos afectados; y la responsabilidad civil está acotada por los límites contractuales de póliza.\\
+Los resultados presentan evidencia mixta sobre la independencia entre severidades de coberturas. Las pruebas de correlación (Pearson y Spearman) no detectan dependencia lineal o monotónica significativa entre pares de coberturas (p-valores $>$ 0.05), confirmando independencia en las relaciones bilaterales de severidad. Sin embargo, los tests de comparación global (Wilcoxon, ANOVA, Kruskal-Wallis) rechazan consistentemente la hipótesis nula (p-valores = 0.0000), evidenciando diferencias sistemáticas en las distribuciones de severidad entre coberturas.\\
 
-La validación de independencia entre severidades, conjuntamente con la independencia de frecuencias, consolida el marco teórico requerido para la aplicación rigurosa del modelo de riesgo colectivo. Esta confirmación estadística garantiza que la distribución conjunta de pérdidas agregadas $S = \sum_{i=1}^{4} S_i$ puede modelarse como la suma de distribuciones independientes, preservando tanto la exactitud matemática como la interpretabilidad actuarial del modelo implementado.
+Esta diferenciación estadística es actuarialmente esperada y no compromete la validez del modelo de riesgo colectivo. Las diferencias detectadas reflejan la naturaleza heterogénea de las coberturas: PPD (daños vehiculares con distribución concentrada), PPH (hurtos con montos variables), PTH (pérdidas totales de alto valor), y RC (responsabilidades civiles con límites contractuales). La ausencia de correlación entre severidades individuales permite la aplicación válida de algoritmos de convolución, mientras que las diferencias distribucionales justifican la modelación diferenciada implementada para cada cobertura.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../images/ajuste_distribuciones_severidad.png}
-\caption{Ajuste de distribuciones de severidad por cobertura}
+\caption{Ajuste de distribuciones teóricas sobre datos de severidad limpios por cobertura}
 \end{figure}
 
 \subsection{Algoritmo recursivo de Panjer}
@@ -139,7 +139,7 @@ La configuración técnica emplea 50,000 iteraciones máximas con tolerancia de 
 
 \subsection{Transformada Rápida de Fourier}
 
-La implementación del algoritmo FFT se desarrolló en la función \texttt{FFT\_RiesgoColectivo.R}, diseñada para calcular distribuciones de pérdida agregada mediante suma aleatoria utilizando propiedades de convolución en el dominio de frecuencia. Este método aprovecha la eficiencia computacional de la FFT para procesar vectores de gran dimensión con complejidad $O(n \log n)$ en lugar de $O(n^2)$ del método recursivo tradicional.
+La implementación del algoritmo FFT se desarrolló en la función \texttt{FFT\_RiesgoColectivo.R}, diseñada para calcular distribuciones de pérdida agregada mediante suma aleatoria utilizando propiedades de convolución en el dominio de frecuencia. Este método aprovecha la eficiencia computacional de la FFT para procesar vectores de gran dimensión con complejidad $O(n \log n)$ en lugar de $O(n^2)$ del método recursivo tradicional.\\
 
 El algoritmo implementa padding automático a potencias de 2 (262,144 puntos) para optimizar la performance de la FFT y aplica truncamiento inteligente de la distribución de frecuencia basado en criterios de convergencia de masa de probabilidad. La función incluye validación robusta de normalización y manejo de valores negativos resultantes de errores de precisión numérica.
 
@@ -179,13 +179,15 @@ RC & $1.89 \times 10^{-4}$ & $3.12 \times 10^{-4}$ & $>0.9999$ & $>0.9999$ \\
 \end{tabular}
 \end{table}
 
+\begin{minipage}[T][4cm]{0.42\textwidth}
 Los resultados confirman la equivalencia numérica entre ambos métodos, con errores máximos del orden de $10^{-4}$ y correlaciones superiores a 0.9999. Esta validación garantiza la robustez de las implementaciones y proporciona confianza en la selección del método FFT para el cálculo de la distribución agregada total debido a su superior eficiencia computacional.
-
-\begin{figure}[H]
+\end{minipage}
+\hfill
+\begin{minipage}[B]{0.53\textwidth}
 \centering
-\includegraphics[width=0.65\textwidth]{../data/output/grafico_validacion_cdf_fft_panjer.png}
-\caption{Validación cruzada: comparación de funciones de distribución acumulada FFT vs Panjer}
-\end{figure}
+\includegraphics[width=\textwidth]{../data/output/grafico_validacion_cdf_fft_panjer.png}
+\captionof{figure}{Validación cruzada: comparación de funciones de distribución acumulada FFT vs Panjer}
+\end{minipage}
 
 \subsection{Convolución final y distribución agregada total}
 

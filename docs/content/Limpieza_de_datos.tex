@@ -4,7 +4,7 @@ La limpieza de datos constituye un proceso fundamental para garantizar la calida
 
 \subsection{Limpieza del portafolio histórico}
 
-El portafolio histórico inicial comprendía 1,130,223 registros que requirieron un proceso de depuración sistemático. Se eliminaron 248,928 registros duplicados (22\%) y 263 registros con valores nulos (0.003\%), resultando en 881,032 pólizas únicas. Posteriormente, se aplicó un filtro temporal para seleccionar únicamente las pólizas con exposición durante 2018, alineándose con la disponibilidad de datos de siniestralidad.
+El portafolio histórico inicial comprendía 1,130,223 registros que requirieron un proceso de depuración sistemático. Se eliminaron 248,928 registros duplicados (22\%) y 263 registros con valores nulos (0.003\%), resultando en 881,032 pólizas únicas. Posteriormente, se aplicó un filtro temporal para seleccionar únicamente las pólizas con exposición durante 2018, eliminando 490,714 registros adicionales y alineándose con la disponibilidad de datos de siniestralidad.
 
 \begin{table}[H]
 \centering
@@ -16,13 +16,14 @@ El portafolio histórico inicial comprendía 1,130,223 registros que requirieron
 Inicial & - & 1,130,223 \\
 Duplicados & 248,928 & 881,295 \\
 Valores nulos & 263 & 881,032 \\
-Prima < \$1,250,000 & 671,187 & 209,845 \\
+Exposición 2018 & 490,714 & 390,318 \\
+Prima < \$1,250,000 & 180,473 & 209,845 \\
 Duración < 90 días & 699 & 209,146 \\
 \hline
 \end{tabular}
 \end{table}
 
-Se implementó un umbral de prima mínima de \$1,250,000 basado en tarifas de seguros todo riesgo de 2016, eliminando 671,187 registros que representaban 46.2\% del portafolio pero solo 19.9\% del valor total de primas. Adicionalmente, se eliminaron 699 pólizas con duración inferior a 90 días, consideradas como seguros cancelados por impago tras el período de gracia.
+El filtro temporal eliminó 490,714 pólizas sin exposición en 2018, representando 55.7\% de las pólizas procesadas. Se implementó un umbral de prima mínima de \$1,250,000 basado en tarifas de seguros todo riesgo de 2016, eliminando 180,473 registros que representaban 46.2\% del portafolio filtrado pero solo 19.9\% del valor total de primas. Adicionalmente, se eliminaron 699 pólizas con duración inferior a 90 días, consideradas como seguros cancelados por impago tras el período de gracia.
 
 \subsection{Limpieza de la siniestralidad histórica}
 
@@ -37,13 +38,13 @@ Los siniestros históricos contenían 21,428 registros iniciales, reducidos a 21
 \hline
 PPH & 343 & 14.3\% \\
 PTH & 278 & 9.1\% \\
-PPD & 2,891 & 16.7\% \\
+PPD & 1,514 & 8.8\% \\
 RC & 559 & 7.8\% \\
 \hline
 \end{tabular}
 \end{table}
 
-Se aplicó ajuste temporal mediante factores IPC mensuales para actualizar todas las severidades a valores de enero 2019, garantizando homogeneidad monetaria con el portafolio vigente. Los valores de severidad igual a cero fueron eliminados sistemáticamente, representando entre 7.8\% y 16.7\% según la cobertura.
+Se aplicó ajuste temporal mediante factores IPC mensuales para actualizar todas las severidades a valores de enero 2019, garantizando homogeneidad monetaria con el portafolio vigente. Los valores de severidad igual a cero fueron eliminados sistemáticamente, representando entre 7.8\% y 14.3\% según la cobertura.
 
 \subsection{Limpieza del portafolio vigente}
 
